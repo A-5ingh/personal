@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Amarbir Singh</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{ --bg: #ffffff; --text: #0f172a; --muted: #374151; }
+    [data-theme="dark"]{ --bg:#0b1220; --text:#f8fafc; --muted:#9ca3af; }
+
+    html{ background:var(--bg); color:var(--text); scroll-behavior: smooth; }
+    body{ font-family: 'Inter', Arial, sans-serif; margin:0; padding:20px 20px 260px; background:transparent; color:var(--text); }
+    /* override specific Tailwind muted class to match theme */
+    .text-gray-700 { color: var(--muted) !important; }
+
+    /* fade-in used for tagline and chars (staggered) */
+    .fade-in { opacity: 0; transform: translateY(10px) scale(.995); transition: opacity 1s cubic-bezier(.2,.9,.3,1), transform 1s cubic-bezier(.2,.9,.3,1); }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* creative bold cursor: diamond outline for light, filled for dark
+       apply to body, links, and buttons so cursor stays consistent on hover/click */
+    body, a, button, .icon-button { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'><polygon points='14,3 24,14 14,25 4,14' fill='none' stroke='%23000' stroke-width='2'/></svg>") 14 14, auto; }
+    [data-theme="dark"] body, [data-theme="dark"] a, [data-theme="dark"] button, [data-theme="dark"] .icon-button { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'><polygon points='14,3 24,14 14,25 4,14' fill='%23fff' stroke='%23fff' stroke-width='0'/></svg>") 14 14, auto; }
+
+    /* hero char styles */
+    #hero { display:inline-block; line-height:1; }
+    #hero .char { display:inline-block; will-change:transform,opacity; transition: color 0.12s ease; }
+    #hero .char.space { width:.45em; }
+    /* tilt classes: alternate char tilts left/right on hover */
+    #hero .char.tilt-left { transform: rotate(-18deg) translateY(6px) scale(.99); opacity:.95; }
+    #hero .char.tilt-right { transform: rotate(18deg) translateY(6px) scale(.99); opacity:.95; }
+
+    /* layout tweaks */
+    header { background: transparent; }
+    nav a, nav button { color: var(--muted); }
+    .icon-button { border: none; background: transparent; padding: 4px; display:inline-flex; align-items:center; gap:6px; }
+    .icon-button .sound-on { display: none; }
+    .icon-button.on .sound-on { display: inline; }
+    .icon-button.on .sound-off { display: none; }
+    .theme-label { font-size: 12px; margin-left:6px; }
+    /* make icons clearer and bigger */
+    nav svg { width: 24px; height: 24px; }
+    .theme-label { font-size: 13px; }
+    .hero-wrap { min-height: calc(100vh - 120px); display:flex; align-items:center; justify-content:center; }
+
+    /* skill cloud (fixed bottom of viewport; larger hit area, entangled layout) */
+    #skill-area { position: fixed !important; left: 50%; transform: translateX(-50%); bottom: 8vh; width: calc(100% - 48px); max-width: 64rem; z-index: 60; pointer-events: auto; display: flex; justify-content: center; }
+    #skill-cloud { height:84px; position:relative; pointer-events: auto; }
+    /* each skill has a larger padding and an invisible hit-area to make hovering easier */
+    /* hidden by default — revealed by the sequence (class .show) */
+    #skill-cloud .skill { position:absolute; top:18px; left:50%; transform: translateX(var(--tx, -50%)) translateY(var(--ty, 0)) rotate(var(--rot, 0deg)) scale(var(--scale, 1)); opacity:0; font-weight:700; font-size:15px; padding:10px 14px; margin:0; border-radius:8px; user-select:none; cursor:pointer; transition: transform 0.36s cubic-bezier(.2,.9,.3,1), opacity 0.22s ease, color 0.12s ease; pointer-events:none; }
+    /* invisible expansion around each skill to make hover less precise */
+    #skill-cloud .skill::after{ content:''; position:absolute; inset:-8px; border-radius:10px; pointer-events:none; }
+    #skill-cloud .skill.show, #skill-cloud .skill:hover, #skill-cloud .skill:focus, #skill-cloud .skill.active { --ty: -56px; --scale: 1.12; opacity:1; z-index:999; box-shadow: 0 10px 30px rgba(0,0,0,0.16); pointer-events:auto; }
+    .skill-hint { margin-top:8px; font-size:13px; color:var(--muted); opacity:0.9; pointer-events:auto; transform: translateY(8px); }
+    @keyframes pulse { 0%,100%{ transform: translateY(0); opacity:0.72;} 50%{ transform: translateY(-4px); opacity:1; } }
+    [data-theme="dark"] .skill-hint { color: rgba(255,255,255,0.85); }
+    [data-theme="dark"] #skill-cloud .skill { color: rgba(255,255,255,0.94); }
+    [data-theme="light"] #skill-cloud .skill { color: rgba(0,0,0,0.94); }
+  </style>
+</head>
+<body>
+  <header class="w-full py-6 flex justify-end px-6">
+    <nav class="flex gap-3 items-center text-sm">
+      <a href="#about" class="mr-2">About</a>
+      <span>|</span>
+      <a href="https://github.com/" aria-label="GitHub" class="icon-link ml-2" target="_blank" rel="noopener" title="GitHub">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 018 4.8c.68.003 1.36.092 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <button id="sound-toggle" aria-pressed="false" title="Toggle sound" class="icon-button ml-2" aria-label="Toggle sound">
+        <svg class="sound-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+        <svg class="sound-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a9 9 0 010 14.14"/></svg>
+      </button>
+      <button id="theme-toggle" aria-pressed="false" title="Toggle theme (system/light/dark)" class="icon-button ml-2" aria-label="Toggle theme">
+        <svg class="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+        <span class="theme-label">System</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="hero-wrap px-6 text-center">
+    <div>
+      <h1 id="hero" class="text-7xl md:text-9xl leading-tight" aria-label="Amarbir Singh">Amarbir Singh</h1>
+      <p id="tagline" class="mt-3 text-base md:text-lg text-gray-700 fade-in">Curious. Engineer.</p>
+    </div>
+  </main>
+
+  <div id="skill-area" class="max-w-3xl mx-auto py-6 px-6" style="position:relative;">
+  <div id="skill-cloud" style="height:56px; position:relative;"><!-- skills will be rendered here --></div>
+  <div class="skill-hint" aria-hidden="true">Hover to reveal skills</div>
+  <hr style="position:relative; margin-top:-12px; border:none; border-top:1px solid rgba(0,0,0,0.08);"/>
+  </div>
+
+  <section id="about" class="max-w-3xl mx-auto py-12 px-6">
+    <h2 class="text-2xl mb-3">About</h2>
+    <p class="text-base text-gray-700">Cloud & DevSecOps architect with 15 years' experience. Curious about how systems work; prefers clear, minimal solutions.</p>
+    <ul class="mt-3 text-base text-gray-700" style="list-style:disc;padding-left:1rem;">
+      <li>Designs secure, reliable cloud platforms at scale.</li>
+      <li>Automates infrastructure, CI/CD, and security workflows.</li>
+      <li>Delivers concise, production-ready solutions—clarity first.</li>
+    </ul>
+  </section>
+
+  <script>
+    // --- THEME: system / light / dark ---
+    var THEME_KEY = 'site-theme'; // values: 'system'|'light'|'dark'
+    function applyTheme(t){
+      var root = document.documentElement;
+      if(t === 'system' || !t){
+        // follow prefers-color-scheme
+        var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if(sysDark) root.setAttribute('data-theme','dark'); else root.removeAttribute('data-theme');
+        localStorage.setItem(THEME_KEY,'system');
+        updateThemeButton('System');
+      } else if(t === 'dark'){
+        root.setAttribute('data-theme','dark'); localStorage.setItem(THEME_KEY,'dark'); updateThemeButton('Dark');
+      } else {
+        root.removeAttribute('data-theme'); localStorage.setItem(THEME_KEY,'light'); updateThemeButton('Light');
+      }
+    }
+    function cycleTheme(){
+      var cur = localStorage.getItem(THEME_KEY) || 'system';
+      var order = ['system','light','dark'];
+      var next = order[(order.indexOf(cur) + 1) % order.length];
+      applyTheme(next);
+    }
+    function updateThemeButton(label){ var btn = document.getElementById('theme-toggle'); if(btn) { btn.title = 'Theme: ' + label; btn.setAttribute('aria-pressed', label!=='System'); if(label==='Dark') btn.classList.add('on'); else btn.classList.remove('on'); var span = btn.querySelector('.theme-label'); if(span) span.textContent = label; } }
+
+    // helper to get effective theme for colors
+    function getEffectiveTheme(){
+      var t = localStorage.getItem(THEME_KEY) || 'system';
+      if(t === 'system'){
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      }
+      return t;
+    }
+    function monoShade(theme){
+      // returns a monochrome shade suitable for theme: lighter shades on dark bg, darker on light bg
+      if(theme === 'dark'){
+        var a = 0.86 + Math.random()*0.12; return 'rgba(255,255,255,' + a.toFixed(2) + ')';
+      } else {
+        var a2 = 0.86 + Math.random()*0.12; return 'rgba(0,0,0,' + a2.toFixed(2) + ')';
+      }
+    }
+
+    // initialize theme on load
+    document.addEventListener('DOMContentLoaded', function(){
+      var saved = localStorage.getItem(THEME_KEY) || 'system';
+      applyTheme(saved);
+      var tbtn = document.getElementById('theme-toggle'); if(tbtn) tbtn.addEventListener('click', cycleTheme);
+    });
+
+    // --- AUDIO: simple reliable pop sound ---
+    function enableAudio(){
+      try{
+        if(!window.__audioCtx || window.__audioCtx.state === 'closed'){
+          window.__audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if(window.__audioCtx.state === 'suspended') window.__audioCtx.resume().catch(function(){});
+        window.__audioEnabled = true;
+        var btn = document.getElementById('sound-toggle'); if(btn){ btn.setAttribute('aria-pressed','true'); btn.classList.add('on'); }
+        return true;
+      }catch(e){ return false; }
+    }
+    function disableAudio(){
+      try{ if(window.__audioCtx && typeof window.__audioCtx.close === 'function') window.__audioCtx.close(); }catch(e){}
+      window.__audioCtx = null; window.__audioEnabled = false; var btn = document.getElementById('sound-toggle'); if(btn){ btn.setAttribute('aria-pressed','false'); btn.classList.remove('on'); }
+    }
+    document.addEventListener('pointerdown', function(){ if(!window.__audioEnabled) enableAudio(); }, { once:true, passive:true });
+    document.addEventListener('DOMContentLoaded', function(){ var sbtn = document.getElementById('sound-toggle'); if(sbtn) sbtn.addEventListener('click', function(){ if(window.__audioEnabled) disableAudio(); else { var ok = enableAudio(); if(ok) playPop(700,0.06,0.06); } }); });
+
+    // simple short pop (reliable)
+    function playPop(freq, dur, volume){
+      try{
+        if(!window.__audioCtx || !window.__audioEnabled) return;
+        var ctx = window.__audioCtx; if(ctx.state === 'suspended') ctx.resume().catch(function(){});
+        var now = ctx.currentTime;
+        var o = ctx.createOscillator(); var g = ctx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(freq || 800, now);
+        g.gain.setValueAtTime(volume || 0.06, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + (dur || 0.06));
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + (dur || 0.06));
+      }catch(e){ }
+    }
+
+    function playChime(){ try{ playPop(720,0.06,0.06); }catch(e){} }
+
+    // --- HERO split into chars + interactions ---
+    function splitToChars(el){ var text = el.textContent||''; text = text.replace(/\s+$/,''); el.textContent=''; for(var i=0;i<text.length;i++){ var ch=text[i]; var s=document.createElement('span'); var parity = (i % 2 === 0) ? 'even' : 'odd'; s.className = 'char ' + parity + (ch=== ' ' ? ' space' : ''); s.textContent = ch; s.classList.add('fade-in'); el.appendChild(s); } }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      var hero = document.getElementById('hero'); if(!hero) return;
+      splitToChars(hero);
+      var chars = Array.prototype.slice.call(hero.querySelectorAll('.char'));
+      chars.forEach(function(c,i){ var d=(i*0.03+Math.random()*0.04).toFixed(3)+'s'; c.style.transition='transform 0.45s cubic-bezier(.2,.9,.3,1), opacity 0.6s ease '+d+', color 0.12s ease'; c.style.transitionDelay=d; });
+      requestAnimationFrame(function(){ document.querySelectorAll('.fade-in').forEach(function(el){ el.classList.add('visible'); }); });
+
+      chars.forEach(function(c){
+        c.addEventListener('mouseenter', function(){
+          var isOdd = c.classList.contains('odd');
+          c.classList.add(isOdd ? 'tilt-right' : 'tilt-left');
+          try{ var th = getEffectiveTheme(); c.style.color = monoShade(th); }catch(e){}
+          playPop(700+Math.random()*300,0.06,0.06);
+        });
+        c.addEventListener('mouseleave', function(){
+          c.classList.remove('tilt-right','tilt-left');
+          c.style.color = '';
+        });
+        c.addEventListener('touchstart', function(e){
+          e.preventDefault();
+          var isOdd2 = c.classList.contains('odd');
+          c.classList.add(isOdd2 ? 'tilt-right' : 'tilt-left');
+          try{ var th2 = getEffectiveTheme(); c.style.color = monoShade(th2); }catch(e){}
+          playPop(750,0.06,0.06);
+          setTimeout(function(){ c.classList.remove('tilt-right','tilt-left'); c.style.color = ''; },420);
+        });
+      });
+
+      var heroBox = hero;
+      heroBox.addEventListener('mousemove', function(ev){ var rect=heroBox.getBoundingClientRect(); var x=ev.clientX-rect.left; chars.forEach(function(c){ var r=c.getBoundingClientRect(); var cx=r.left + r.width/2 - rect.left; var dist=Math.abs(cx-x); if(dist<80){ var intensity=Math.max(0,(80-dist)/80); var dir = c.classList.contains('odd') ? 1 : -1; c.style.transition='transform 0.06s linear'; c.style.transform='rotate(' + (intensity*18*dir) + 'deg) translateY(' + (intensity*6) + 'px)'; var last=c.__lastPopTime||0; var now=Date.now(); if(intensity>0.8 && now-last>260){ playPop(680+Math.random()*240,0.04,0.04); c.__lastPopTime=now; } } else { c.style.transform=''; c.style.transition=''; } }); });
+      heroBox.addEventListener('mouseleave', function(){ chars.forEach(function(c){ c.style.transform=''; c.style.transition=''; c.classList.remove('tilt-right','tilt-left'); }); });
+
+      // theme button hookup already added earlier
+    });
+
+    // smooth anchor scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){ a.addEventListener('click', function(e){ var t=document.querySelector(this.getAttribute('href')); if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth', block:'start'}); } }); });
+
+    // --- SKILL CLOUD: sequence-on-hover (sliding window) ---
+    (function(){
+      var skills = ["Cloud","DevSecOps","Security","Infrastructure","CI/CD","Automation","SRE","Observability","Compliance","Kubernetes","Terraform","Monitoring"];
+      var container = document.getElementById('skill-cloud'); if(!container) return;
+      var hint = document.querySelector('.skill-hint');
+      var els = [];
+
+      function render(){
+        els = [];
+        container.innerHTML = '';
+        var w = container.clientWidth || 600;
+        skills.forEach(function(s,i){
+          var el = document.createElement('span'); el.className = 'skill'; el.tabIndex = -1; el.setAttribute('role','img'); el.setAttribute('aria-label', s);
+          el.textContent = s;
+
+          // random offset to create spaced but entangled cluster centered (larger spread)
+          var offset = (Math.random()*220 - 110);
+          offset += (i - skills.length/2) * 28;
+          el.style.left = '50%';
+          el.style.marginLeft = offset + 'px';
+
+          // initialize CSS variables (preserve rotation while allowing hover to change translate/scale)
+          el.style.setProperty('--tx','-50%');
+          el.style.setProperty('--rot',(Math.random()*10-5) + 'deg');
+          el.style.setProperty('--scale','1');
+          container.appendChild(el);
+          els.push(el);
+        });
+      }
+
+      render(); window.addEventListener('resize', function(){ render(); });
+
+      // sequence controls
+      var seqTimer = null; var seqIndex = 0; var windowSize = 1; var intervalMs = 1000;
+      function showWindow(start){
+        els.forEach(function(el){ el.classList.remove('show'); el.style.zIndex = 1; el.setAttribute('aria-hidden','true'); el.tabIndex = -1; });
+        for(var k=0;k<windowSize;k++){
+          var idx = (start + k) % els.length; var el = els[idx]; if(!el) continue;
+          el.classList.add('show'); el.style.zIndex = 100 + k; el.setAttribute('aria-hidden','false'); el.tabIndex = 0;
+        }
+      }
+      function startSequence(){ if(seqTimer) return; seqIndex = 0; showWindow(seqIndex); seqTimer = setInterval(function(){ seqIndex = (seqIndex + 1) % els.length; showWindow(seqIndex); }, intervalMs); }
+      function stopSequence(){ if(seqTimer){ clearInterval(seqTimer); seqTimer = null; } els.forEach(function(el){ el.classList.remove('show'); el.style.zIndex = 1; el.setAttribute('aria-hidden','true'); el.tabIndex = -1; }); }
+
+      // hide initially
+      stopSequence();
+
+      // trigger on container and hint (ensure hint accepts pointer events)
+      container.addEventListener('mouseenter', startSequence);
+      container.addEventListener('mouseleave', stopSequence);
+      container.addEventListener('focusin', startSequence);
+      container.addEventListener('focusout', stopSequence);
+      if(hint){
+        hint.style.pointerEvents = 'auto';
+        hint.addEventListener('mouseenter', startSequence);
+        hint.addEventListener('mouseleave', stopSequence);
+        hint.addEventListener('focus', startSequence);
+        hint.addEventListener('blur', stopSequence);
+      }
+    })();
+
+  </script>
+</body>
+</html>
