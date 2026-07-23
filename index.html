@@ -33,7 +33,7 @@
     :root{ --bg: #ffffff; --text: #0f172a; --muted: #374151; }
     [data-theme="dark"]{ --bg:#0b1220; --text:#f8fafc; --muted:#9ca3af; }
 
-    html{ background:var(--bg); color:var(--text); scroll-behavior: smooth; transition: background 0.6s ease, color 0.6s ease; }
+    html{ background:var(--bg); color:var(--text); scroll-behavior: smooth; transition: background 0.6s ease, color 0.6s ease; overflow-x: hidden; }
     html.theme-transitioning { animation: themeGlow 0.6s ease; }
     @keyframes themeGlow { 0%{filter:brightness(1);} 30%{filter:brightness(1.15);} 100%{filter:brightness(1);} }
     body{ font-family: 'Inter', Arial, sans-serif; margin:0; padding:20px; background:transparent; color:var(--text); min-height:100vh; display:flex; flex-direction:column; transition: color 0.5s ease; }
