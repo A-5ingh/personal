@@ -11,7 +11,8 @@
     [data-theme="dark"]{ --bg:#0b1220; --text:#f8fafc; --muted:#9ca3af; }
 
     html{ background:var(--bg); color:var(--text); scroll-behavior: smooth; }
-    body{ font-family: 'Inter', Arial, sans-serif; margin:0; padding:20px 20px 260px; background:transparent; color:var(--text); }
+    body{ font-family: 'Inter', Arial, sans-serif; margin:0; padding:20px; background:transparent; color:var(--text); min-height:100vh; display:flex; flex-direction:column; }
+    main.hero-wrap { flex:1; }
     /* override specific Tailwind muted class to match theme */
     .text-gray-700 { color: var(--muted) !important; }
 
@@ -33,7 +34,7 @@
     #hero .char.tilt-right { transform: rotate(18deg) translateY(6px) scale(.99); opacity:.95; }
 
     /* layout tweaks */
-    header { background: transparent; }
+    header { background: transparent; font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace; }
     nav a, nav button { color: var(--muted); }
     .icon-button { border: none; background: transparent; padding: 4px; display:inline-flex; align-items:center; gap:6px; }
     .icon-button .sound-on { display: none; }
@@ -73,20 +74,20 @@
   </style>
 </head>
 <body>
-  <header class="w-full py-6 flex justify-end px-6">
+  <header class="w-full py-6 flex justify-between items-center px-6">
+    <span class="text-sm" style="color: var(--muted);">Contact: amarbir1800 [at] gmail [dot] com</span>
     <nav class="flex gap-3 items-center text-sm">
-      <!-- <a href="#about" class="mr-2">About</a>
-      <span>|</span> -->
-      <a href="https://github.com/a-5ingh" aria-label="GitHub" class="icon-link ml-2" target="_blank" rel="noopener" title="GitHub">
+      <a href="https://github.com/a-5ingh" aria-label="GitHub" class="icon-link" target="_blank" rel="noopener" title="GitHub">
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 018 4.8c.68.003 1.36.092 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       </a>
+      <span>|</span>
+      <a href="https://cv.singhamarbir.com" aria-label="Resume" class="icon-link" target="_blank" rel="noopener" title="Resume">Resume</a>
       <button id="sound-toggle" aria-pressed="false" title="Toggle sound" class="icon-button ml-2" aria-label="Toggle sound">
         <svg class="sound-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
         <svg class="sound-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a9 9 0 010 14.14"/></svg>
       </button>
       <button id="theme-toggle" aria-pressed="false" title="Toggle theme (system/light/dark)" class="icon-button ml-2" aria-label="Toggle theme">
         <svg class="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
-        <span class="theme-label">System</span>
       </button>
     </nav>
   </header>
@@ -118,7 +119,21 @@
   <div class="skill-hint" aria-hidden="true">Hover or tap to reveal skills</div>
   </div>
 
+  <footer class="text-center py-8 text-sm" style="font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace; color: var(--muted); margin-top:auto;">
+    &copy; 2025 Amarbir Singh &middot; Made with <span id="footer-icon" class="text-xl" style="color:#e74c3c;">&hearts;</span> using OpenCode
+  </footer>
+
   <script>
+    // Footer icon animation
+    var footerIcons = ['&#9829;','&#9733;','&#10024;','&#9889;','&#9733;','&#9829;'];
+    var footerIconEl = document.getElementById('footer-icon');
+    var footerIdx = 0;
+    if(footerIconEl){
+      setInterval(function(){
+        footerIdx = (footerIdx + 1) % footerIcons.length;
+        footerIconEl.innerHTML = footerIcons[footerIdx];
+      }, 1500);
+    }
     // --- THEME: system / light / dark ---
     var THEME_KEY = 'site-theme'; // values: 'system'|'light'|'dark'
     function applyTheme(t){
@@ -141,7 +156,13 @@
       var next = order[(order.indexOf(cur) + 1) % order.length];
       applyTheme(next);
     }
-    function updateThemeButton(label){ var btn = document.getElementById('theme-toggle'); if(btn) { btn.title = 'Theme: ' + label; btn.setAttribute('aria-pressed', label!=='System'); if(label==='Dark') btn.classList.add('on'); else btn.classList.remove('on'); var span = btn.querySelector('.theme-label'); if(span) span.textContent = label; } }
+    // Theme icons
+    var THEME_ICONS = {
+      'System': '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+      'Light': '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>',
+      'Dark': '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>'
+    };
+    function updateThemeButton(label){ var btn = document.getElementById('theme-toggle'); if(btn) { btn.title = 'Theme: ' + label; var svg = btn.querySelector('.theme-icon'); if(svg && THEME_ICONS[label]) svg.innerHTML = THEME_ICONS[label]; } }
 
     // helper to get effective theme for colors
     function getEffectiveTheme(){
