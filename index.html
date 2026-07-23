@@ -45,27 +45,38 @@
     .theme-label { font-size: 13px; }
     .hero-wrap { min-height: calc(100vh - 120px); display:flex; align-items:center; justify-content:center; }
 
-    /* skill cloud (fixed bottom of viewport; larger hit area, entangled layout) */
-    #skill-area { position: fixed !important; left: 50%; transform: translateX(-50%); bottom: 8vh; width: calc(100% - 48px); max-width: 64rem; z-index: 60; pointer-events: auto; display: flex; justify-content: center; }
-    #skill-cloud { height:84px; position:relative; pointer-events: auto; }
-    /* each skill has a larger padding and an invisible hit-area to make hovering easier */
-    /* hidden by default — revealed by the sequence (class .show) */
-    #skill-cloud .skill { position:absolute; top:18px; left:50%; transform: translateX(var(--tx, -50%)) translateY(var(--ty, 0)) rotate(var(--rot, 0deg)) scale(var(--scale, 1)); opacity:0; font-weight:700; font-size:15px; padding:10px 14px; margin:0; border-radius:8px; user-select:none; cursor:pointer; transition: transform 0.36s cubic-bezier(.2,.9,.3,1), opacity 0.22s ease, color 0.12s ease; pointer-events:none; }
-    /* invisible expansion around each skill to make hover less precise */
-    #skill-cloud .skill::after{ content:''; position:absolute; inset:-8px; border-radius:10px; pointer-events:none; }
-    #skill-cloud .skill.show, #skill-cloud .skill:hover, #skill-cloud .skill:focus, #skill-cloud .skill.active { --ty: -56px; --scale: 1.12; opacity:1; z-index:999; box-shadow: 0 10px 30px rgba(0,0,0,0.16); pointer-events:auto; }
-    .skill-hint { margin-top:8px; font-size:13px; color:var(--muted); opacity:0.9; pointer-events:auto; transform: translateY(8px); }
+    /* skill cloud (bottom of page) */
+    #skill-area { width:100%; max-width:64rem; margin:0 auto; pointer-events:auto; padding:2rem 0 4rem; }
+    #skill-cloud { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; pointer-events:auto; }
+    /* each skill - clean pill style */
+    #skill-cloud .skill { opacity:0; font-weight:600; font-size:14px; padding:8px 16px; border-radius:20px; user-select:none; cursor:pointer; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; pointer-events:none; white-space:nowrap; border:1px solid rgba(128,128,128,0.2); }
+    #skill-cloud .skill::after { content:''; position:absolute; inset:-6px; border-radius:24px; pointer-events:none; }
+    #skill-area:hover #skill-cloud .skill, #skill-area.active #skill-cloud .skill { opacity:1; pointer-events:auto; }
+    #skill-cloud .skill:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+    .skill-hint { margin-top:20px; font-size:13px; color:var(--muted); opacity:0.9; pointer-events:auto; cursor:pointer; }
     @keyframes pulse { 0%,100%{ transform: translateY(0); opacity:0.72;} 50%{ transform: translateY(-4px); opacity:1; } }
     [data-theme="dark"] .skill-hint { color: rgba(255,255,255,0.85); }
     [data-theme="dark"] #skill-cloud .skill { color: rgba(255,255,255,0.94); }
     [data-theme="light"] #skill-cloud .skill { color: rgba(0,0,0,0.94); }
+
+    /* responsive: smaller screens */
+    @media (max-width: 640px) {
+      #skill-cloud { gap:8px; }
+      #skill-cloud .skill { font-size:12px; padding:6px 12px; }
+      .hero-wrap { min-height: calc(100vh - 180px); }
+    }
+
+    /* scroll hint */
+    .scroll-hint { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); color:var(--muted); opacity:0.6; animation:bounce 2s infinite; }
+    .scroll-hint:hover { opacity:1; }
+    @keyframes bounce { 0%,100%{ transform:translateX(-50%) translateY(0); } 50%{ transform:translateX(-50%) translateY(8px); } }
   </style>
 </head>
 <body>
   <header class="w-full py-6 flex justify-end px-6">
     <nav class="flex gap-3 items-center text-sm">
-      <a href="#about" class="mr-2">About</a>
-      <span>|</span>
+      <!-- <a href="#about" class="mr-2">About</a>
+      <span>|</span> -->
       <a href="https://github.com/" aria-label="GitHub" class="icon-link ml-2" target="_blank" rel="noopener" title="GitHub">
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 018 4.8c.68.003 1.36.092 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       </a>
@@ -82,26 +93,30 @@
 
   <main class="hero-wrap px-6 text-center">
     <div>
-      <h1 id="hero" class="text-7xl md:text-9xl leading-tight" aria-label="Amarbir Singh">Amarbir Singh</h1>
-      <p id="tagline" class="mt-3 text-base md:text-lg text-gray-700 fade-in">Curious. Engineer.</p>
+      <h1 id="hero" class="text-5xl sm:text-7xl md:text-9xl leading-tight" aria-label="Amarbir Singh">Amarbir<br class="sm:hidden"> Singh</h1>
+      <p id="tagline" class="mt-3 text-base md:text-lg text-gray-700 fade-in">Curious. Architect. Engineer.</p>
     </div>
+    <a href="#about" class="scroll-hint" aria-label="Scroll down">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+    </a>
   </main>
 
-  <div id="skill-area" class="max-w-3xl mx-auto py-6 px-6" style="position:relative;">
-  <div id="skill-cloud" style="height:56px; position:relative;"><!-- skills will be rendered here --></div>
-  <div class="skill-hint" aria-hidden="true">Hover to reveal skills</div>
-  <hr style="position:relative; margin-top:-12px; border:none; border-top:1px solid rgba(0,0,0,0.08);"/>
-  </div>
+  <div style="height:60vh;"></div>
 
-  <section id="about" class="max-w-3xl mx-auto py-12 px-6">
+  <section id="about" class="max-w-3xl mx-auto py-12 px-6" style="font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;">
     <h2 class="text-2xl mb-3">About</h2>
     <p class="text-base text-gray-700">Cloud & DevSecOps architect with 15 years' experience. Curious about how systems work; prefers clear, minimal solutions.</p>
-    <ul class="mt-3 text-base text-gray-700" style="list-style:disc;padding-left:1rem;">
+    <ul class="mt-3 text-base text-gray-700" style="list-style:disc;padding-left:1rem; display:flex; flex-direction:column; gap:12px;">
       <li>Designs secure, reliable cloud platforms at scale.</li>
       <li>Automates infrastructure, CI/CD, and security workflows.</li>
       <li>Delivers concise, production-ready solutions—clarity first.</li>
     </ul>
   </section>
+
+  <div id="skill-area" class="max-w-3xl mx-auto px-6 text-center">
+  <div id="skill-cloud"><!-- skills will be rendered here --></div>
+  <div class="skill-hint" aria-hidden="true">Hover or tap to reveal skills</div>
+  </div>
 
   <script>
     // --- THEME: system / light / dark ---
@@ -229,65 +244,30 @@
     // smooth anchor scrolling
     document.querySelectorAll('a[href^="#"]').forEach(function(a){ a.addEventListener('click', function(e){ var t=document.querySelector(this.getAttribute('href')); if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth', block:'start'}); } }); });
 
-    // --- SKILL CLOUD: sequence-on-hover (sliding window) ---
+    // --- SKILL CLOUD: show all on hover/click ---
     (function(){
       var skills = ["Cloud","DevSecOps","Security","Infrastructure","CI/CD","Automation","SRE","Observability","Compliance","Kubernetes","Terraform","Monitoring"];
       var container = document.getElementById('skill-cloud'); if(!container) return;
       var hint = document.querySelector('.skill-hint');
-      var els = [];
 
-      function render(){
-        els = [];
-        container.innerHTML = '';
-        var w = container.clientWidth || 600;
-        skills.forEach(function(s,i){
-          var el = document.createElement('span'); el.className = 'skill'; el.tabIndex = -1; el.setAttribute('role','img'); el.setAttribute('aria-label', s);
-          el.textContent = s;
+      skills.forEach(function(s){
+        var el = document.createElement('span'); el.className = 'skill'; el.setAttribute('role','img'); el.setAttribute('aria-label', s);
+        el.textContent = s;
+        container.appendChild(el);
+      });
 
-          // random offset to create spaced but entangled cluster centered (larger spread)
-          var offset = (Math.random()*220 - 110);
-          offset += (i - skills.length/2) * 28;
-          el.style.left = '50%';
-          el.style.marginLeft = offset + 'px';
+      // click/tap toggle for mobile
+      var skillArea = document.getElementById('skill-area');
+      skillArea.addEventListener('click', function(e){
+        skillArea.classList.toggle('active');
+      });
 
-          // initialize CSS variables (preserve rotation while allowing hover to change translate/scale)
-          el.style.setProperty('--tx','-50%');
-          el.style.setProperty('--rot',(Math.random()*10-5) + 'deg');
-          el.style.setProperty('--scale','1');
-          container.appendChild(el);
-          els.push(el);
-        });
-      }
-
-      render(); window.addEventListener('resize', function(){ render(); });
-
-      // sequence controls
-      var seqTimer = null; var seqIndex = 0; var windowSize = 1; var intervalMs = 1000;
-      function showWindow(start){
-        els.forEach(function(el){ el.classList.remove('show'); el.style.zIndex = 1; el.setAttribute('aria-hidden','true'); el.tabIndex = -1; });
-        for(var k=0;k<windowSize;k++){
-          var idx = (start + k) % els.length; var el = els[idx]; if(!el) continue;
-          el.classList.add('show'); el.style.zIndex = 100 + k; el.setAttribute('aria-hidden','false'); el.tabIndex = 0;
+      // close when clicking outside
+      document.addEventListener('click', function(e){
+        if(!skillArea.contains(e.target)){
+          skillArea.classList.remove('active');
         }
-      }
-      function startSequence(){ if(seqTimer) return; seqIndex = 0; showWindow(seqIndex); seqTimer = setInterval(function(){ seqIndex = (seqIndex + 1) % els.length; showWindow(seqIndex); }, intervalMs); }
-      function stopSequence(){ if(seqTimer){ clearInterval(seqTimer); seqTimer = null; } els.forEach(function(el){ el.classList.remove('show'); el.style.zIndex = 1; el.setAttribute('aria-hidden','true'); el.tabIndex = -1; }); }
-
-      // hide initially
-      stopSequence();
-
-      // trigger on container and hint (ensure hint accepts pointer events)
-      container.addEventListener('mouseenter', startSequence);
-      container.addEventListener('mouseleave', stopSequence);
-      container.addEventListener('focusin', startSequence);
-      container.addEventListener('focusout', stopSequence);
-      if(hint){
-        hint.style.pointerEvents = 'auto';
-        hint.addEventListener('mouseenter', startSequence);
-        hint.addEventListener('mouseleave', stopSequence);
-        hint.addEventListener('focus', startSequence);
-        hint.addEventListener('blur', stopSequence);
-      }
+      });
     })();
 
   </script>
