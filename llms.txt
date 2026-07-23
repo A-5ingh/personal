@@ -1,0 +1,14 @@
+# Amarbir Singh — Personal Website
+
+Personal website and portfolio of Amarbir Singh, a Software Engineer and AI enthusiast.
+
+## About
+
+Amarbir Singh is a Software Engineer based in Canada, passionate about building tools, AI systems, and open-source projects.
+
+## Key Pages
+
+- [Home](https://singhamarbir.com/) — Main landing page with skills and introduction
+- [Resume](https://cv.singhamarbir.com/) — Resume and professional experience
+- [GitHub](https://github.com/a-5ingh) — Open-source projects and contributions
+- [Email](mailto:amarbir1800@gmail.com) — Contact Amarbir

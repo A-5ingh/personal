@@ -29,3 +29,10 @@ npx serve .
 - Prefer sections within `index.html`; avoid external files unless necessary
 - Subtle motion, Tailwind utility classes, compact top-right nav
 - Single GitHub link (currently placeholder)
+
+## Style Rules
+
+- **No inline styles in HTML** — always use Tailwind utility classes
+- The only exception is dynamic JS-driven styles (e.g., animation transforms, calculated values)
+- If a Tailwind class doesn't exist for a value, use arbitrary values like `text-[var(--muted)]` or `w-[60vw]`
+- Never use `style=""` attributes on HTML elements
