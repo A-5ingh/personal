@@ -16,6 +16,12 @@ python3 -m http.server 8000
 npx serve .
 ```
 
+## Deployment
+
+- Cloudflare Pages via GitHub Actions (`.github/workflows/deploy.yml`)
+- Deploys on push to `main` branch
+- Requires secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+
 ## Workflow
 
 - Open `index.html` first — it's the entire site
