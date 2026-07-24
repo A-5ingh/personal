@@ -6,6 +6,7 @@ export async function onRequestGet(context) {
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');
+  const debug = url.searchParams.get('debug') === '1';
 
   const cookieHeader = request.headers.get('Cookie') || '';
   const stateMatch = cookieHeader.match(/gh_state=([^;]+)/);
