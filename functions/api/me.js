@@ -1,12 +1,12 @@
 // Check current GitHub auth status
-import { getToken, jsonResponse, jsonError } from './utils.js';
+import { getToken, jsonResponse } from './utils.js';
 
 export async function onRequestGet(context) {
   const { request } = context;
   const token = getToken(request);
 
   if (!token) {
-    return jsonResponse({ authed: false });
+    return jsonResponse({ authed: false, reason: 'no_token' });
   }
 
   const res = await fetch('https://api.github.com/user', {
@@ -17,7 +17,13 @@ export async function onRequestGet(context) {
   });
 
   if (!res.ok) {
-    return jsonResponse({ authed: false });
+    const errText = await res.text();
+    return jsonResponse({
+      authed: false,
+      reason: 'github_api_error',
+      status: res.status,
+      error_snippet: errText.slice(0, 200)
+    });
   }
 
   const user = await res.json();

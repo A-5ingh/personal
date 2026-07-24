@@ -36,9 +36,8 @@ export async function onRequestGet(context) {
     return jsonError('GitHub authentication failed', 400);
   }
 
-  // Set cookie directly in a 200 HTML response with JS redirect.
-  // No two-step redirect chain — Safari ITP may block cookies in redirect chains
-  // that start cross-site, but should accept them in a top-level 200 response.
+  // Set cookie in a 302 redirect to the blog post.
+  // A single server-side redirect avoids Safari JS-initiated navigation issues.
 
   if (debug) {
     return new Response(JSON.stringify({
@@ -56,18 +55,14 @@ export async function onRequestGet(context) {
     });
   }
 
-  const safeRedirect = redirect.replace(/</g, '&lt;').replace(/"/g, '&quot;');
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signed in</title></head><body><p>Signed in. Redirecting...</p><script>setTimeout(function(){location.href=${JSON.stringify(redirect)}},1500)</script></body></html>`;
-
-  const headers = new Headers({
-    'Content-Type': 'text/html;charset=utf-8',
-    'Set-Cookie': `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`,
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'DENY',
-    'Referrer-Policy': 'strict-origin-when-cross-origin'
-  });
+  const headers = new Headers();
+  headers.append('Location', redirect);
+  headers.append('Set-Cookie', `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
   headers.append('Set-Cookie', 'gh_state=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0');
   headers.append('Set-Cookie', 'gh_redirect=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0');
+  headers.append('X-Content-Type-Options', 'nosniff');
+  headers.append('X-Frame-Options', 'DENY');
+  headers.append('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-  return new Response(html, { status: 200, headers });
+  return new Response(null, { status: 302, headers });
 }
