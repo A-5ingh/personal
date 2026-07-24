@@ -4,11 +4,12 @@ export async function onRequestGet(context) {
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');
-  const redirect = url.searchParams.get('redirect') || '/blogs/';
 
   const cookieHeader = request.headers.get('Cookie') || '';
   const stateMatch = cookieHeader.match(/gh_state=([^;]+)/);
   const savedState = stateMatch ? stateMatch[1] : '';
+  const redirectMatch = cookieHeader.match(/gh_redirect=([^;]+)/);
+  const redirect = redirectMatch ? decodeURIComponent(redirectMatch[1]) : '/blogs/';
 
   if (!code || !state || state !== savedState) {
     return new Response('Invalid or missing OAuth state', { status: 400 });
@@ -36,6 +37,7 @@ export async function onRequestGet(context) {
   headers.append('Location', redirect);
   headers.append('Set-Cookie', `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
   headers.append('Set-Cookie', 'gh_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+  headers.append('Set-Cookie', 'gh_redirect=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
 
   return new Response(null, { status: 302, headers });
 }

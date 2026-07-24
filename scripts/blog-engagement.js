@@ -5,7 +5,7 @@
   var issue = meta && meta.getAttribute('content');
   if(!issue) return;
 
-  var repo = 'a-5ingh/singhamarbir.com';
+  var repo = 'a-5ingh/personal';
   var apiBase = 'https://api.github.com/repos/' + repo;
   var issueUrl = 'https://github.com/' + repo + '/issues/' + issue;
   var authState = { authed: false, user: null };
@@ -19,7 +19,7 @@
   }
 
   function markdownToHtml(text){
-    // Minimal markdown conversion for comments
+    if(!text) return '';
     return text
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/```[\s\S]*?```/g, function(m){ return '<pre><code>' + m.slice(3, -3) + '</code></pre>'; })
@@ -30,11 +30,29 @@
       .replace(/\n/g, '<br>');
   }
 
+  function setStatus(msg, type){
+    var statusEl = el('engagement-status');
+    if(!statusEl) return;
+    statusEl.textContent = msg;
+    statusEl.className = 'text-xs mt-2 ' + (type === 'error' ? 'text-red-500' : 'text-[var(--muted)]');
+  }
+
+  function api(path, options){
+    return fetch(path, options).then(function(r){
+      if(!r.ok) throw new Error('HTTP ' + r.status + ' from ' + path);
+      return r.json();
+    });
+  }
+
   function loadAuth(){
-    return fetch('/api/me').then(function(r){ return r.json(); }).then(function(data){
+    return api('/api/me').then(function(data){
       authState = data || { authed: false };
       return authState;
-    }).catch(function(){ authState = { authed: false }; return authState; });
+    }).catch(function(e){
+      authState = { authed: false };
+      console.warn('Auth check failed:', e);
+      return authState;
+    });
   }
 
   function loadIssue(){
@@ -67,7 +85,7 @@
     var container = el('engagement');
     var userLabel = authState.authed ? 'Commenting as ' + authState.user + ' · ' : '';
     var signInOrOut = authState.authed
-      ? '<a href="/api/logout" class="text-xs text-[var(--muted)] hover:text-[var(--text)]">Sign out</a>'
+      ? '<a href="/api/logout?redirect=' + encodeURIComponent(window.location.href) + '" class="text-xs text-[var(--muted)] hover:text-[var(--text)]">Sign out</a>'
       : '<a href="/api/login?redirect=' + encodeURIComponent(window.location.href) + '" class="text-xs text-[var(--muted)] hover:text-[var(--text)]">Sign in with GitHub</a>';
 
     container.innerHTML =
@@ -83,6 +101,7 @@
         '<p class="text-xs text-[var(--muted)] mb-2">' + userLabel + signInOrOut + '</p>' +
         '<textarea id="comment-text" rows="3" class="w-full bg-transparent border border-[rgba(128,128,128,0.3)] rounded-md p-3 text-sm text-[var(--text)] placeholder:text-[var(--muted)]" placeholder="Write a comment..."></textarea>' +
         '<button id="comment-submit" class="mt-2 px-4 py-2 text-sm rounded-md bg-[var(--text)] text-[var(--bg)] hover:opacity-90 transition-opacity">Post comment</button>' +
+        '<div id="engagement-status" class="text-xs text-[var(--muted)] mt-2"></div>' +
       '</div>';
 
     bindEvents(comments);
@@ -112,14 +131,18 @@
           return;
         }
         likeBtn.disabled = true;
-        fetch('/api/like', {
+        setStatus('Saving like...');
+        api('/api/like', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ issue: issue })
-        }).then(function(r){ return r.ok ? r.json() : null; }).then(function(){
+        }).then(function(){
+          setStatus('Liked!');
           refresh();
-        }).catch(function(){
+        }).catch(function(e){
           likeBtn.disabled = false;
+          setStatus('Like failed: ' + e.message, 'error');
+          console.error('Like error:', e);
         });
       });
     }
@@ -136,15 +159,19 @@
         var text = commentText.value.trim();
         if(!text) return;
         commentSubmit.disabled = true;
-        fetch('/api/comment', {
+        setStatus('Posting comment...');
+        api('/api/comment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ issue: issue, text: text })
-        }).then(function(r){ return r.ok ? r.json() : null; }).then(function(){
+        }).then(function(){
           commentText.value = '';
+          setStatus('Comment posted.');
           refresh();
-        }).catch(function(){
+        }).catch(function(e){
           commentSubmit.disabled = false;
+          setStatus('Comment failed: ' + e.message, 'error');
+          console.error('Comment error:', e);
         });
       });
     }
@@ -155,8 +182,22 @@
       var reactions = results[1] || [];
       var comments = results[2] || [];
       renderWidget(reactions.length, comments);
+    }).catch(function(e){
+      console.error('Refresh failed:', e);
+      ensureWidget();
+      var container = el('engagement');
+      if(container) container.innerHTML = '<p class="text-sm text-red-500">Unable to load engagement data. <a href="' + issueUrl + '" target="_blank" rel="noopener" class="underline">View on GitHub</a>.</p>';
     });
   }
 
-  refresh();
+  // First verify the API is reachable
+  fetch('/api/ping').then(function(r){
+    if(!r.ok) throw new Error('ping failed');
+    refresh();
+  }).catch(function(e){
+    console.error('API ping failed:', e);
+    ensureWidget();
+    var container = el('engagement');
+    if(container) container.innerHTML = '<p class="text-sm text-red-500">Comments API unavailable. Check that Cloudflare Pages Functions are deployed and environment variables are set.</p>';
+  });
 })();
