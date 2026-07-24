@@ -12,7 +12,8 @@ export async function onRequestGet(context) {
   const res = await fetch('https://api.github.com/user', {
     headers: {
       'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github+json'
+      'Accept': 'application/vnd.github+json',
+      'User-Agent': 'singhamarbir.com'
     }
   });
 

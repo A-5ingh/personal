@@ -34,7 +34,8 @@ export async function onRequestPost(context) {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Accept': 'application/vnd.github+json',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'User-Agent': 'singhamarbir.com'
     },
     body: JSON.stringify({ body: text })
   });
