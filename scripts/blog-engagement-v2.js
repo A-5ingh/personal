@@ -215,20 +215,10 @@
       renderWidget(reactions.length, comments);
     }).catch(function(e){
       console.error('Refresh failed:', e);
-      ensureWidget();
-      var container = el('engagement');
-      if(container) container.innerHTML = '<p class="text-sm text-red-500">Unable to load engagement data. <a href="' + issueUrl + '" target="_blank" rel="noopener" class="underline">View on GitHub</a>.</p>';
+      renderWidget(0, []);
+      setStatus('Unable to load engagement data. ' + (e.message || ''), 'error');
     });
   }
 
-  // First verify the API is reachable
-  fetch('/api/ping').then(function(r){
-    if(!r.ok) throw new Error('ping failed');
-    refresh();
-  }).catch(function(e){
-    console.error('API ping failed:', e);
-    ensureWidget();
-    var container = el('engagement');
-    if(container) container.innerHTML = '<p class="text-sm text-red-500">Comments API unavailable. Check that Cloudflare Pages Functions are deployed and environment variables are set.</p>';
-  });
+  refresh();
 })();
