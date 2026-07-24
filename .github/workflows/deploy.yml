@@ -27,6 +27,7 @@ jobs:
       - name: Generate posts from blog issues
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: node scripts/issue-to-post.js
 
       - name: Generate blog index

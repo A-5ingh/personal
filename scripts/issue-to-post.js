@@ -45,6 +45,20 @@ function parseFrontmatter(body) {
 }
 
 async function fetchIssues() {
+  // If triggered by a specific issue event, process only that one
+  if (process.env.ISSUE_NUMBER) {
+    const url = `https://api.github.com/repos/${REPO}/issues/${process.env.ISSUE_NUMBER}`;
+    const res = await fetch(url, { headers });
+    if (!res.ok) throw new Error(`Failed to fetch issue #${process.env.ISSUE_NUMBER}: ${res.status}`);
+    const issue = await res.json();
+    if (issue.labels && issue.labels.some(l => l.name === 'blog')) {
+      return [issue];
+    }
+    console.log(`Issue #${issue.number} does not have 'blog' label, skipping.`);
+    return [];
+  }
+
+  // Full scan: all open issues with blog label
   const url = `https://api.github.com/repos/${REPO}/issues?labels=blog&state=open&per_page=100`;
   const res = await fetch(url, { headers });
   if (!res.ok) {
@@ -113,6 +127,18 @@ async function processIssue(issue, template) {
   const filename = `${date}-${slug}.html`;
   const filePath = path.join(BLOGS_DIR, filename);
   const publicUrl = `/blogs/${filename}`;
+
+  // Skip if file already reflects the latest issue content
+  const issueUpdated = new Date(issue.updated_at).getTime();
+  try {
+    const stat = fs.statSync(filePath);
+    if (stat.mtimeMs >= issueUpdated) {
+      console.log(`  Skipping issue #${issue.number} (up to date)`);
+      return;
+    }
+  } catch (e) {
+    // File doesn't exist — will be created
+  }
 
   const { frontmatter, content } = parseFrontmatter(issue.body || '');
   const excerpt = frontmatter.excerpt || '';

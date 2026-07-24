@@ -61,6 +61,8 @@ npx serve .
 - The deploy workflow triggers on `issues: [opened, edited, labeled]` in addition to `push`
 - When you create or edit a `blog`-labeled issue, the workflow runs immediately
 - The post is generated and deployed within ~1 minute
+- Only the specific changed issue is processed (via `ISSUE_NUMBER` env var)
+- On `push` to `main`, all `blog`-labeled issues are processed as a full rebuild
 - The `GITHUB_TOKEN` auto-token does not trigger recursive workflow runs
 
 ## Comments & Likes
