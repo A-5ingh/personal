@@ -39,7 +39,13 @@
 
   function api(path, options){
     return fetch(path, options).then(function(r){
-      if(!r.ok) throw new Error('HTTP ' + r.status + ' from ' + path);
+      if(!r.ok){
+        return r.text().then(function(text){
+          var msg = text;
+          try { var parsed = JSON.parse(text); if(parsed.error) msg = parsed.error; } catch(e){}
+          throw new Error(msg || ('HTTP ' + r.status));
+        });
+      }
       return r.json();
     });
   }

@@ -8,7 +8,7 @@ export async function onRequestGet(context) {
   const githubUrl = new URL('https://github.com/login/oauth/authorize');
   githubUrl.searchParams.set('client_id', env.GITHUB_CLIENT_ID);
   githubUrl.searchParams.set('redirect_uri', `${url.origin}/api/auth`);
-  githubUrl.searchParams.set('scope', 'public_repo');
+  githubUrl.searchParams.set('scope', 'repo');
   githubUrl.searchParams.set('state', state);
   githubUrl.searchParams.set('allow_signup', 'true');
 

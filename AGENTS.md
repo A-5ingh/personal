@@ -46,6 +46,8 @@ npx serve .
   2. Set Authorization callback URL to `https://singhamarbir.com/api/auth`
   3. Add `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` as Cloudflare Pages environment variables
   4. Redeploy so Functions can read them
+  5. The OAuth flow requests `repo` scope; if your repo is public and you prefer narrower scope, change `scope` in `functions/api/login.js` to `public_repo`
+- Debug: visit `/api/debug` while signed in to see token status and granted scopes
 
 ## Workflow
 
