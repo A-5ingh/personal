@@ -53,8 +53,15 @@ npx serve .
 - The `scripts/issue-to-post.js` script (run in CI) fetches open issues with `blog` label
 - Converts Markdown → HTML via `marked`, renders into `blogs/YYYY-MM-DD-slug.html`
 - Adds `published` label and a comment with the published URL to the issue
-- Edit an issue → next push regenerates the post
+- Edit an issue → next push or instant trigger regenerates the post
 - Remove `blog` label → post stays (does not delete)
+
+### Instant publishing on issue create/edit
+
+- The deploy workflow triggers on `issues: [opened, edited, labeled]` in addition to `push`
+- When you create or edit a `blog`-labeled issue, the workflow runs immediately
+- The post is generated and deployed within ~1 minute
+- The `GITHUB_TOKEN` auto-token does not trigger recursive workflow runs
 
 ## Comments & Likes
 
