@@ -8,7 +8,7 @@ export async function onRequestGet(context) {
 
   const headers = new Headers();
   headers.append('Location', redirect);
-  headers.append('Set-Cookie', 'gh_token=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+  headers.append('Set-Cookie', 'gh_token=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
   headers.append('X-Content-Type-Options', 'nosniff');
   headers.append('X-Frame-Options', 'DENY');
   headers.append('Referrer-Policy', 'strict-origin-when-cross-origin');
