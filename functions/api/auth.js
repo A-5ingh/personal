@@ -57,7 +57,7 @@ export async function onRequestGet(context) {
   }
 
   const safeRedirect = redirect.replace(/</g, '&lt;').replace(/"/g, '&quot;');
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title><meta http-equiv="refresh" content="0;url=${safeRedirect}"></head><body><script>location.href=${JSON.stringify(redirect)}</script></body></html>`;
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signed in</title></head><body><p>Signed in. Redirecting...</p><script>setTimeout(function(){location.href=${JSON.stringify(redirect)}},500)</script></body></html>`;
 
   const headers = new Headers({
     'Content-Type': 'text/html;charset=utf-8',
