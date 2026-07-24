@@ -122,14 +122,14 @@ async function processIssue(issue, template) {
   const { marked } = await import('marked');
   const bodyHtml = await marked.parse(content);
 
-  // Fill template
+  // Fill template (replaceAll for placeholders that appear multiple times)
   let html = template;
-  html = html.replace('{{TITLE}}', issue.title);
-  html = html.replace('{{DATE}}', date);
-  html = html.replace('{{EXCERPT}}', excerpt);
-  html = html.replace('{{TAGS}}', tags);
-  html = html.replace('{{ISSUE}}', String(issue.number));
-  html = html.replace('{{CONTENT}}', bodyHtml);
+  html = html.replaceAll('{{TITLE}}', issue.title);
+  html = html.replaceAll('{{DATE}}', date);
+  html = html.replaceAll('{{EXCERPT}}', excerpt);
+  html = html.replaceAll('{{TAGS}}', tags);
+  html = html.replaceAll('{{ISSUE}}', String(issue.number));
+  html = html.replaceAll('{{CONTENT}}', bodyHtml);
 
   // Write file
   fs.writeFileSync(filePath, html, 'utf8');
