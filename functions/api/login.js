@@ -16,8 +16,8 @@ export async function onRequestGet(context) {
 
   const headers = new Headers();
   headers.append('Location', githubUrl.toString());
-  headers.append('Set-Cookie', `gh_state=${state}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=600`);
-  headers.append('Set-Cookie', `gh_redirect=${encodeURIComponent(redirect)}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=600`);
+  headers.append('Set-Cookie', `gh_state=${state}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600`);
+  headers.append('Set-Cookie', `gh_redirect=${encodeURIComponent(redirect)}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600`);
 
   return new Response(null, { status: 302, headers });
 }

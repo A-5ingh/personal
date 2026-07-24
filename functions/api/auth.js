@@ -36,10 +36,24 @@ export async function onRequestGet(context) {
   }
 
   const headers = new Headers();
-  headers.append('Location', redirect);
-  headers.append('Set-Cookie', `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=604800`);
-  headers.append('Set-Cookie', 'gh_state=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0');
-  headers.append('Set-Cookie', 'gh_redirect=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0');
+  headers.append('Set-Cookie', `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
+  headers.append('Set-Cookie', 'gh_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+  headers.append('Set-Cookie', 'gh_redirect=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
 
+  if (debug) {
+    headers.append('Content-Type', 'application/json');
+    return new Response(JSON.stringify({
+      success: true,
+      token_prefix: tokenData.access_token.slice(0, 8) + '...',
+      redirect: redirect,
+      set_cookies: [
+        'gh_token=***; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800',
+        'gh_state=; ...',
+        'gh_redirect=; ...'
+      ]
+    }, null, 2), { status: 200, headers });
+  }
+
+  headers.append('Location', redirect);
   return new Response(null, { status: 302, headers });
 }

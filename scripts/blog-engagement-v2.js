@@ -58,6 +58,7 @@
   }
 
   function api(path, options){
+    options = options || {};
     console.log('[engagement] fetch:', path, options.method || 'GET');
     return fetch(path, options).then(function(r){
       console.log('[engagement] response:', path, r.status);
