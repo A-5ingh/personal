@@ -9,3 +9,6 @@
 
 /sitemap.xml
   Cache-Control: public, max-age=0, must-revalidate
+
+/scripts/*
+  Cache-Control: public, max-age=0, must-revalidate
