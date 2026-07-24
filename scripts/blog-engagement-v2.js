@@ -110,7 +110,7 @@
     if(article && article.parentNode) article.parentNode.insertBefore(container, article.nextSibling);
   }
 
-  function renderWidget(count, comments){
+  function renderWidget(count, comments, hasLiked, myReactionId){
     ensureWidget();
     var container = el('engagement');
     var userLabel = authState.authed ? 'Commenting as ' + authState.user + ' · ' : '';
@@ -118,10 +118,16 @@
       ? '<a href="/api/logout?redirect=' + encodeURIComponent(window.location.href) + '" class="text-xs text-[var(--muted)] hover:text-[var(--text)]">Sign out</a>'
       : '<a href="/api/login?redirect=' + encodeURIComponent(window.location.href) + '" class="text-xs text-[var(--muted)] hover:text-[var(--text)]">Sign in with GitHub</a>';
 
+    var heartFill = hasLiked ? '#ef4444' : 'none';
+    var heartStroke = hasLiked ? '#ef4444' : 'currentColor';
+    var btnClass = hasLiked
+      ? 'inline-flex items-center gap-2 text-sm text-red-500 transition-colors'
+      : 'inline-flex items-center gap-2 text-sm text-[var(--muted)] hover:text-red-500 transition-colors';
+
     container.innerHTML =
       '<div class="flex items-center gap-6 mb-6">' +
-        '<button id="like-btn" class="inline-flex items-center gap-2 text-sm text-[var(--muted)] hover:text-red-500 transition-colors" title="Like this post">' +
-          '<svg id="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+        '<button id="like-btn" class="' + btnClass + '" title="' + (hasLiked ? 'Unlike this post' : 'Like this post') + '">' +
+          '<svg id="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="' + heartFill + '" stroke="' + heartStroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
           '<span id="like-count">' + count + '</span>' +
         '</button>' +
         '<a id="comments-link" href="' + issueUrl + '" target="_blank" rel="noopener" class="text-sm text-[var(--muted)] hover:text-[var(--text)]">' + comments.length + (comments.length === 1 ? ' comment' : ' comments') + '</a>' +
@@ -134,7 +140,7 @@
         '<div id="engagement-status" class="text-xs text-[var(--muted)] mt-2"></div>' +
       '</div>';
 
-    bindEvents(comments);
+    bindEvents(comments, hasLiked, myReactionId);
   }
 
   function renderComments(comments){
@@ -152,7 +158,7 @@
     }).join('');
   }
 
-  function bindEvents(comments){
+  function bindEvents(comments, hasLiked, myReactionId){
     var likeBtn = el('like-btn');
     if(likeBtn){
       likeBtn.addEventListener('click', function(e){
@@ -162,19 +168,35 @@
           return;
         }
         likeBtn.disabled = true;
-        setStatus('Saving like...');
-        api('/api/like', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ issue: issue })
-        }).then(function(){
-          setStatus('Liked!');
-          refresh();
-        }).catch(function(e){
-          likeBtn.disabled = false;
-          setStatus('Like failed: ' + e.message, 'error');
-          console.error('Like error:', e);
-        });
+        if(hasLiked){
+          setStatus('Removing like...');
+          api('/api/unlike', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ issue: issue, reactionId: myReactionId })
+          }).then(function(){
+            setStatus('Like removed.');
+            refresh();
+          }).catch(function(e){
+            likeBtn.disabled = false;
+            setStatus('Unlike failed: ' + e.message, 'error');
+            console.error('Unlike error:', e);
+          });
+        } else {
+          setStatus('Saving like...');
+          api('/api/like', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ issue: issue })
+          }).then(function(){
+            setStatus('Liked!');
+            refresh();
+          }).catch(function(e){
+            likeBtn.disabled = false;
+            setStatus('Like failed: ' + e.message, 'error');
+            console.error('Like error:', e);
+          });
+        }
       });
     }
 
@@ -212,10 +234,21 @@
     Promise.all([loadAuth(), loadReactions(), loadComments()]).then(function(results){
       var reactions = results[1] || [];
       var comments = results[2] || [];
-      renderWidget(reactions.length, comments);
+      var hasLiked = false;
+      var myReactionId = null;
+      if(authState.authed && reactions.length){
+        for(var i = 0; i < reactions.length; i++){
+          if(reactions[i].content === 'heart' && reactions[i].user && reactions[i].user.login === authState.user){
+            hasLiked = true;
+            myReactionId = reactions[i].id;
+            break;
+          }
+        }
+      }
+      renderWidget(reactions.length, comments, hasLiked, myReactionId);
     }).catch(function(e){
       console.error('Refresh failed:', e);
-      renderWidget(0, []);
+      renderWidget(0, [], false, null);
       setStatus('Unable to load engagement data. ' + (e.message || ''), 'error');
     });
   }
