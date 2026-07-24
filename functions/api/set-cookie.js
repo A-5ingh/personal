@@ -10,6 +10,9 @@ export async function onRequestGet(context) {
     const headers = new Headers();
     headers.append('Location', '/api/set-cookie?action=check');
     headers.append('Set-Cookie', 'gh_test=dummy-value; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=60');
+    headers.append('X-Content-Type-Options', 'nosniff');
+    headers.append('X-Frame-Options', 'DENY');
+    headers.append('Referrer-Policy', 'strict-origin-when-cross-origin');
     return new Response(null, { status: 302, headers });
   }
 

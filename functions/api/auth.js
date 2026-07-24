@@ -40,6 +40,9 @@ export async function onRequestGet(context) {
   headers.append('Set-Cookie', `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
   headers.append('Set-Cookie', 'gh_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
   headers.append('Set-Cookie', 'gh_redirect=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+  headers.append('X-Content-Type-Options', 'nosniff');
+  headers.append('X-Frame-Options', 'DENY');
+  headers.append('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   if (debug) {
     headers.append('Content-Type', 'application/json');
