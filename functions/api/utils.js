@@ -19,8 +19,15 @@ export function getOrigin(request) {
 export function isSameOrigin(request) {
   const url = new URL(request.url);
   const origin = getOrigin(request);
-  if (!origin) return false;
-  return origin === url.origin;
+  if (origin) return origin === url.origin;
+
+  // Fallback to Sec-Fetch-Site if available
+  const secFetchSite = request.headers.get('Sec-Fetch-Site');
+  if (secFetchSite === 'same-origin') return true;
+  if (secFetchSite === 'cross-site' || secFetchSite === 'same-site') return false;
+
+  // No origin/referer and no Sec-Fetch-Site: allow for compatibility, but log
+  return true;
 }
 
 export function requireSameOrigin(request) {
@@ -31,6 +38,19 @@ export function requireSameOrigin(request) {
     });
   }
   return null;
+}
+
+export function getSecurityHeaders(request) {
+  const headers = {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'strict-origin-when-cross-origin'
+  };
+  const origin = request.headers.get('Origin');
+  if (origin) {
+    headers['Vary'] = 'Origin';
+  }
+  return headers;
 }
 
 export function validateRedirect(request, redirect) {

@@ -1,5 +1,5 @@
-// Security headers middleware for all /api/* functions
-import { requireSameOrigin } from './utils.js';
+// Security headers and CSRF middleware for all /api/* functions
+import { requireSameOrigin, getSecurityHeaders } from './utils.js';
 
 export async function onRequest(context) {
   const { request, next } = context;
@@ -10,21 +10,19 @@ export async function onRequest(context) {
     if (blocked) return blocked;
   }
 
+  const securityHeaders = getSecurityHeaders(request);
+
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: {
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'Referrer-Policy': 'strict-origin-when-cross-origin'
-      }
+      headers: securityHeaders
     });
   }
 
   const response = await next();
   const newResponse = new Response(response.body, response);
-  newResponse.headers.set('X-Content-Type-Options', 'nosniff');
-  newResponse.headers.set('X-Frame-Options', 'DENY');
-  newResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  for (const [key, value] of Object.entries(securityHeaders)) {
+    newResponse.headers.set(key, value);
+  }
   return newResponse;
 }

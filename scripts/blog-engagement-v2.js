@@ -58,9 +58,12 @@
   }
 
   function api(path, options){
+    console.log('[engagement] fetch:', path, options.method || 'GET');
     return fetch(path, options).then(function(r){
+      console.log('[engagement] response:', path, r.status);
       if(!r.ok){
         return r.text().then(function(text){
+          console.log('[engagement] error body:', text);
           var msg = text;
           try { var parsed = JSON.parse(text); if(parsed.error) msg = parsed.error; } catch(e){}
           throw new Error(msg || ('HTTP ' + r.status));
