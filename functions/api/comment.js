@@ -16,7 +16,7 @@ export async function onRequestPost(context) {
     return new Response('Missing issue or comment text', { status: 400 });
   }
 
-  const res = await fetch(`https://api.github.com/repos/a-5ingh/singhamarbir.com/issues/${issue}/comments`, {
+  const res = await fetch(`https://api.github.com/repos/a-5ingh/personal/issues/${issue}/comments`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,

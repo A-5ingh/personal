@@ -15,7 +15,7 @@ export async function onRequestPost(context) {
     return new Response('Missing issue number', { status: 400 });
   }
 
-  const res = await fetch(`https://api.github.com/repos/a-5ingh/singhamarbir.com/issues/${issue}/reactions`, {
+  const res = await fetch(`https://api.github.com/repos/a-5ingh/personal/issues/${issue}/reactions`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
