@@ -47,12 +47,14 @@ npx serve .
   3. Add `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` as Cloudflare Pages environment variables
   4. Redeploy so Functions can read them
   5. The OAuth flow requests `repo` scope; if your repo is public and you prefer narrower scope, change `scope` in `functions/api/login.js` to `public_repo`
+  6. `GITHUB_CLIENT_SECRET` is also used to sign the short-lived token exchanged between `/api/auth` and `/api/finish-auth`
 - Security:
   - API endpoints reject cross-origin POSTs
   - All redirects are validated to same-origin paths
   - Issue numbers and comment text are sanitized
   - Comments are rendered with escaped HTML and only http/https links
   - Rate limit: 10 likes/comments per minute per IP
+  - OAuth callback signs a short-lived token and redirects to same-origin `/api/finish-auth` to set the cookie, avoiding Safari ITP
 
 ## Workflow
 

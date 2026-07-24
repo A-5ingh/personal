@@ -128,3 +128,74 @@ export function getToken(request) {
   const tokenMatch = cookieHeader.match(/gh_token=([^;]+)/);
   return tokenMatch ? tokenMatch[1] : null;
 }
+
+// JWT-like signed token using HMAC-SHA256 (for same-origin token exchange)
+// We avoid JWS library imports to keep zero dependencies.
+function base64UrlEncode(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let str = '';
+  for (let i = 0; i < bytes.length; i++) {
+    str += String.fromCharCode(bytes[i]);
+  }
+  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlDecode(str) {
+  const padding = '='.repeat((4 - (str.length % 4)) % 4);
+  const base64 = str.replace(/-/g, '+').replace(/_/g, '/') + padding;
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+async function getHmacKey(secret) {
+  const enc = new TextEncoder();
+  const keyData = enc.encode(secret);
+  const hash = await crypto.subtle.digest('SHA-256', keyData);
+  return await crypto.subtle.importKey(
+    'raw',
+    hash,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign', 'verify']
+  );
+}
+
+export async function signToken(payload, secret) {
+  const header = JSON.stringify({ alg: 'HS256', typ: 'JWT' });
+  const body = JSON.stringify(payload);
+  const enc = new TextEncoder();
+  const headerB64 = base64UrlEncode(enc.encode(header));
+  const bodyB64 = base64UrlEncode(enc.encode(body));
+  const signingInput = `${headerB64}.${bodyB64}`;
+  const key = await getHmacKey(secret);
+  const signature = await crypto.subtle.sign('HMAC', key, enc.encode(signingInput));
+  const signatureB64 = base64UrlEncode(signature);
+  return `${signingInput}.${signatureB64}`;
+}
+
+export async function verifyToken(token, secret, maxAgeSeconds = 60) {
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  const [headerB64, bodyB64, signatureB64] = parts;
+  const enc = new TextEncoder();
+  const signingInput = `${headerB64}.${bodyB64}`;
+  const key = await getHmacKey(secret);
+  const signature = base64UrlDecode(signatureB64);
+  const valid = await crypto.subtle.verify('HMAC', key, signature, enc.encode(signingInput));
+  if (!valid) return null;
+  try {
+    const bodyBytes = base64UrlDecode(bodyB64);
+    const bodyText = new TextDecoder().decode(bodyBytes);
+    const payload = JSON.parse(bodyText);
+    if (!payload.iat || !payload.exp) return null;
+    const now = Math.floor(Date.now() / 1000);
+    if (now > payload.exp || now < payload.iat - maxAgeSeconds) return null;
+    return payload;
+  } catch (e) {
+    return null;
+  }
+}
