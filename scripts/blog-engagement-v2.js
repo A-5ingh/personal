@@ -3,7 +3,8 @@
 (function(){
   var meta = document.querySelector('meta[name="github-issue"]');
   var issue = meta && meta.getAttribute('content');
-  if(!issue) return;
+  if(!issue || !/^\d+$/.test(issue.trim())) return;
+  issue = issue.trim();
 
   var repo = 'a-5ingh/personal';
   var apiBase = 'https://api.github.com/repos/' + repo;
@@ -18,15 +19,34 @@
     return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
+  function escapeHtml(text){
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  function sanitizeUrl(url){
+    if(!url) return null;
+    try {
+      var u = new URL(url);
+      if(u.protocol === 'https:' || u.protocol === 'http:') {
+        return u.toString();
+      }
+    } catch(e) {}
+    return null;
+  }
+
   function markdownToHtml(text){
     if(!text) return '';
-    return text
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/```[\s\S]*?```/g, function(m){ return '<pre><code>' + m.slice(3, -3) + '</code></pre>'; })
+    var escaped = escapeHtml(text);
+    return escaped
+      .replace(/```([\s\S]*?)```/g, function(m, code){ return '<pre><code>' + code + '</code></pre>'; })
       .replace(/`([^`]+)`/g, '<code>$1</code>')
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(m, label, url){
+        var safeUrl = sanitizeUrl(url);
+        if(!safeUrl) return '<span>' + label + '</span>';
+        return '<a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer nofollow">' + label + '</a>';
+      })
       .replace(/\n/g, '<br>');
   }
 
@@ -116,10 +136,11 @@
   function renderComments(comments){
     if(!comments.length) return '<p class="text-sm text-[var(--muted)]">No comments yet.</p>';
     return comments.map(function(c){
+      var safeUrl = sanitizeUrl(c.user.html_url) || '#';
       return '<div class="comment">' +
         '<div class="flex items-center gap-2 mb-1">' +
-          '<img src="' + c.user.avatar_url + '" alt="" class="w-6 h-6 rounded-full" />' +
-          '<a href="' + c.user.html_url + '" target="_blank" rel="noopener" class="text-sm font-semibold text-[var(--text)] hover:underline">' + c.user.login + '</a>' +
+          '<img src="' + escapeHtml(c.user.avatar_url) + '" alt="" class="w-6 h-6 rounded-full" />' +
+          '<a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer nofollow" class="text-sm font-semibold text-[var(--text)] hover:underline">' + escapeHtml(c.user.login) + '</a>' +
           '<span class="text-xs text-[var(--muted)]">' + fmtDate(c.created_at) + '</span>' +
         '</div>' +
         '<div class="text-sm text-[var(--muted)] leading-relaxed">' + markdownToHtml(c.body) + '</div>' +

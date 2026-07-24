@@ -1,4 +1,6 @@
 // Handle GitHub OAuth callback
+import { validateRedirect, jsonResponse, jsonError } from './utils.js';
+
 export async function onRequestGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -9,10 +11,10 @@ export async function onRequestGet(context) {
   const stateMatch = cookieHeader.match(/gh_state=([^;]+)/);
   const savedState = stateMatch ? stateMatch[1] : '';
   const redirectMatch = cookieHeader.match(/gh_redirect=([^;]+)/);
-  const redirect = redirectMatch ? decodeURIComponent(redirectMatch[1]) : '/blogs/';
+  const redirect = redirectMatch ? validateRedirect(request, decodeURIComponent(redirectMatch[1])) : '/blogs/';
 
   if (!code || !state || state !== savedState) {
-    return new Response('Invalid or missing OAuth state', { status: 400 });
+    return jsonError('Invalid or missing OAuth state', 400);
   }
 
   const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
@@ -30,14 +32,14 @@ export async function onRequestGet(context) {
 
   const tokenData = await tokenRes.json();
   if (!tokenData.access_token) {
-    return new Response('GitHub authentication failed', { status: 400 });
+    return jsonError('GitHub authentication failed', 400);
   }
 
   const headers = new Headers();
   headers.append('Location', redirect);
-  headers.append('Set-Cookie', `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
-  headers.append('Set-Cookie', 'gh_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
-  headers.append('Set-Cookie', 'gh_redirect=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+  headers.append('Set-Cookie', `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=604800`);
+  headers.append('Set-Cookie', 'gh_state=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0');
+  headers.append('Set-Cookie', 'gh_redirect=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0');
 
   return new Response(null, { status: 302, headers });
 }

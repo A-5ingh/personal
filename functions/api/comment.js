@@ -1,14 +1,14 @@
 // Post a comment to a GitHub issue
+import { getToken, sanitizeIssue, sanitizeComment, jsonError, checkRateLimit, jsonResponse } from './utils.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const cookieHeader = request.headers.get('Cookie') || '';
-  const tokenMatch = cookieHeader.match(/gh_token=([^;]+)/);
+  const token = getToken(request);
 
-  if (!tokenMatch) {
+  if (!token) {
     return jsonError('Unauthorized', 401);
   }
 
-  const token = tokenMatch[1];
   let body;
   try {
     body = await request.json();
@@ -16,11 +16,18 @@ export async function onRequestPost(context) {
     return jsonError('Invalid JSON body', 400);
   }
 
-  const issue = body.issue;
-  const text = body.text;
-  if (!issue || !text || !text.trim()) {
-    return jsonError('Missing issue or comment text', 400);
+  const issue = sanitizeIssue(body.issue);
+  if (!issue) {
+    return jsonError('Invalid issue number', 400);
   }
+
+  const text = sanitizeComment(body.text);
+  if (!text) {
+    return jsonError('Invalid or empty comment', 400);
+  }
+
+  const rateLimited = checkRateLimit(request, 'comment');
+  if (rateLimited) return rateLimited;
 
   const res = await fetch(`https://api.github.com/repos/a-5ingh/personal/issues/${issue}/comments`, {
     method: 'POST',
@@ -29,22 +36,15 @@ export async function onRequestPost(context) {
       'Accept': 'application/vnd.github+json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ body: text.trim() })
+    body: JSON.stringify({ body: text })
   });
 
   if (!res.ok) {
     const errText = await res.text();
     console.error('GitHub comment API error:', res.status, errText);
-    return jsonError(`GitHub API error: ${res.status} ${errText}`, res.status);
+    return jsonError('Unable to post comment', res.status);
   }
 
   const data = await res.json();
-  return new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } });
-}
-
-function jsonError(message, status) {
-  return new Response(JSON.stringify({ error: message }), {
-    status,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  return jsonResponse(data);
 }

@@ -1,14 +1,14 @@
 // Post a heart reaction to a GitHub issue
+import { getToken, sanitizeIssue, jsonError, checkRateLimit } from './utils.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const cookieHeader = request.headers.get('Cookie') || '';
-  const tokenMatch = cookieHeader.match(/gh_token=([^;]+)/);
+  const token = getToken(request);
 
-  if (!tokenMatch) {
+  if (!token) {
     return jsonError('Unauthorized', 401);
   }
 
-  const token = tokenMatch[1];
   let body;
   try {
     body = await request.json();
@@ -16,10 +16,13 @@ export async function onRequestPost(context) {
     return jsonError('Invalid JSON body', 400);
   }
 
-  const issue = body.issue;
+  const issue = sanitizeIssue(body.issue);
   if (!issue) {
-    return jsonError('Missing issue number', 400);
+    return jsonError('Invalid issue number', 400);
   }
+
+  const rateLimited = checkRateLimit(request, 'like');
+  if (rateLimited) return rateLimited;
 
   const res = await fetch(`https://api.github.com/repos/a-5ingh/personal/issues/${issue}/reactions`, {
     method: 'POST',
@@ -34,16 +37,9 @@ export async function onRequestPost(context) {
   if (!res.ok) {
     const errText = await res.text();
     console.error('GitHub like API error:', res.status, errText);
-    return jsonError(`GitHub API error: ${res.status} ${errText}`, res.status);
+    return jsonError('Unable to save like', res.status);
   }
 
   const data = await res.json();
-  return new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } });
-}
-
-function jsonError(message, status) {
-  return new Response(JSON.stringify({ error: message }), {
-    status,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  return jsonResponse(data);
 }

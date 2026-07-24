@@ -1,6 +1,6 @@
 // Health check / ping for API functions
+import { jsonResponse } from './utils.js';
+
 export async function onRequestGet(context) {
-  return new Response(JSON.stringify({ ok: true }), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+  return jsonResponse({ ok: true });
 }
