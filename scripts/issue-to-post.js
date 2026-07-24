@@ -58,14 +58,21 @@ async function fetchIssues() {
     return [];
   }
 
-  // Full scan: all open issues with blog label
-  const url = `https://api.github.com/repos/${REPO}/issues?labels=blog&state=open&per_page=100`;
-  const res = await fetch(url, { headers });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`Failed to fetch issues: ${res.status} ${txt.slice(0, 200)}`);
+  // Full scan: all open issues with blog label (paginated)
+  const allIssues = [];
+  for (let page = 1; ; page++) {
+    const url = `https://api.github.com/repos/${REPO}/issues?labels=blog&state=open&per_page=100&page=${page}`;
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`Failed to fetch issues (page ${page}): ${res.status} ${txt.slice(0, 200)}`);
+    }
+    const issues = await res.json();
+    if (!issues.length) break;
+    allIssues.push(...issues);
+    if (issues.length < 100) break;
   }
-  return res.json();
+  return allIssues;
 }
 
 async function ensurePublishedLabel() {
