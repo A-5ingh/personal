@@ -7,7 +7,7 @@ export async function onRequest(context) {
   const path = url.pathname;
 
   // Auth endpoints manage their own headers and cookies; skip middleware
-  if (path === '/api/auth' || path === '/api/login' || path === '/api/logout' || path === '/api/set-cookie') {
+  if (path === '/api/auth' || path === '/api/finish-auth' || path === '/api/login' || path === '/api/logout' || path === '/api/set-cookie') {
     return next();
   }
 

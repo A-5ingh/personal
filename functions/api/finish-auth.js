@@ -1,6 +1,6 @@
 // Finish OAuth by setting token cookie on same-origin request
 // This avoids Safari ITP blocking cookies set during cross-site redirects
-import { validateRedirect, jsonError, getToken } from './utils.js';
+import { validateRedirect, jsonError, getToken, verifyToken } from './utils.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -13,7 +13,6 @@ export async function onRequestGet(context) {
   }
 
   // Verify the signed token
-  const { verifyToken } = await import('./utils.js');
   const payload = await verifyToken(token, env.GITHUB_CLIENT_SECRET, 60);
   if (!payload || !payload.t) {
     return jsonError('Invalid or expired token', 400);
@@ -25,12 +24,19 @@ export async function onRequestGet(context) {
     // Different token, still allow but not from replay
   }
 
-  const headers = new Headers();
-  headers.append('Location', redirect);
-  headers.append('Set-Cookie', `gh_token=${payload.t}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`);
-  headers.append('X-Content-Type-Options', 'nosniff');
-  headers.append('X-Frame-Options', 'DENY');
-  headers.append('Referrer-Policy', 'strict-origin-when-cross-origin');
+  // Return 200 HTML page with cookie set and JS redirect.
+  // Using a 200 response instead of 302 avoids Safari ITP blocking
+  // cookies set during redirect chains that start cross-site.
+  const safeRedirect = redirect.replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title><meta http-equiv="refresh" content="0;url=${safeRedirect}"></head><body><script>location.href=${JSON.stringify(redirect)}</script></body></html>`;
 
-  return new Response(null, { status: 302, headers });
+  const headers = new Headers({
+    'Content-Type': 'text/html;charset=utf-8',
+    'Set-Cookie': `gh_token=${payload.t}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`,
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'strict-origin-when-cross-origin'
+  });
+
+  return new Response(html, { status: 200, headers });
 }
