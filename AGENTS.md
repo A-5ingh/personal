@@ -3,11 +3,11 @@
 ## Architecture
 
 - Single-page static site: `index.html` is the only code file
-- No build system, bundler, or package manager
 - Tailwind CSS v4 via CDN (`@tailwindcss/browser@4`) — no local build pipeline
 - All JS is inline in `index.html` (no external scripts)
 - Font: Inter via Google Fonts
 - Blog posts in `blogs/` directory (simple HTML format)
+- `marked` dependency in `package.json` for issue-to-post conversion
 
 ## Preview
 
@@ -23,17 +23,38 @@ npx serve .
 - Deploys on push to `main` branch
 - Requires secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 - `_headers` file sets cache lifetimes (1 year for assets, no cache for HTML)
-- CI runs `node scripts/gen-blog-index.js` to generate `blogs/index.json` and `sitemap.xml`
+- CI runs `node scripts/issue-to-post.js` then `node scripts/gen-blog-index.js` to generate `blogs/index.json` and `sitemap.xml`
 
 ## Blogging
 
 - Posts live in `blogs/` as plain HTML files
 - Name new posts: `blogs/YYYY-MM-DD-slug.html`
-- Copy from `blogs/template.html` and fill in title, date, excerpt, tags, and GitHub issue number
+- Copy from `blogs/template.html` and fill in `{{TITLE}}`, `{{DATE}}`, `{{EXCERPT}}`, `{{TAGS}}`, `{{ISSUE}}`, `{{CONTENT}}`
 - Create a GitHub issue for each post and set `<meta name="github-issue" content="NUMBER">`
 - Push to `main` — CI regenerates the blog index, sitemap, and deploys
 - No manual updates to `blogs/index.json` or `sitemap.xml` — both are generated
 - Run `node scripts/gen-blog-index.js` locally to preview new posts in listings
+- Run `GITHUB_TOKEN=ghp_xxx node scripts/issue-to-post.js` locally to test issue-to-post conversion
+
+### Auto-publish from GitHub Issues
+
+- Create a GitHub issue with label `blog` to auto-publish as a blog post
+- Issue body format:
+  ```markdown
+  ---
+  excerpt: "Short summary for listing"
+  tags: tag1, tag2
+  ---
+
+  ## Section title
+
+  Content in Markdown...
+  ```
+- The `scripts/issue-to-post.js` script (run in CI) fetches open issues with `blog` label
+- Converts Markdown → HTML via `marked`, renders into `blogs/YYYY-MM-DD-slug.html`
+- Adds `published` label and a comment with the published URL to the issue
+- Edit an issue → next push regenerates the post
+- Remove `blog` label → post stays (does not delete)
 
 ## Comments & Likes
 
@@ -54,7 +75,7 @@ npx serve .
   - Issue numbers and comment text are sanitized
   - Comments are rendered with escaped HTML and only http/https links
   - Rate limit: 10 likes/comments per minute per IP
-  - OAuth callback signs a short-lived token and redirects to same-origin `/api/finish-auth` to set the cookie, avoiding Safari ITP
+  - OAuth callback sets cookie directly in a 302 redirect (skips Safari ITP)
 
 ## Workflow
 

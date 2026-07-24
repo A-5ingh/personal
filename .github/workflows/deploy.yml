@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   deploy:
@@ -14,6 +15,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci --omit=dev
+
+      - name: Generate posts from blog issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/issue-to-post.js
 
       - name: Generate blog index
         run: node scripts/gen-blog-index.js
