@@ -1,5 +1,5 @@
 // Handle GitHub OAuth callback
-import { validateRedirect, jsonError, signToken } from './utils.js';
+import { validateRedirect, jsonError } from './utils.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -36,23 +36,14 @@ export async function onRequestGet(context) {
     return jsonError('GitHub authentication failed', 400);
   }
 
-  // Sign a short-lived token and redirect to same-origin /api/finish-auth
-  // This avoids Safari ITP blocking cookies set during cross-site redirects
-  const now = Math.floor(Date.now() / 1000);
-  const signedToken = await signToken(
-    { t: tokenData.access_token, iat: now, exp: now + 60 },
-    env.GITHUB_CLIENT_SECRET
-  );
-
-  const finishUrl = new URL('/api/finish-auth', url.origin);
-  finishUrl.searchParams.set('token', signedToken);
-  finishUrl.searchParams.set('redirect', redirect);
+  // Set cookie directly in a 200 HTML response with JS redirect.
+  // No two-step redirect chain — Safari ITP may block cookies in redirect chains
+  // that start cross-site, but should accept them in a top-level 200 response.
 
   if (debug) {
     return new Response(JSON.stringify({
       success: true,
       token_prefix: tokenData.access_token.slice(0, 8) + '...',
-      finish_url: finishUrl.toString(),
       redirect: redirect
     }, null, 2), {
       status: 200,
@@ -65,13 +56,18 @@ export async function onRequestGet(context) {
     });
   }
 
-  const headers = new Headers();
-  headers.append('Location', finishUrl.toString());
+  const safeRedirect = redirect.replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title><meta http-equiv="refresh" content="0;url=${safeRedirect}"></head><body><script>location.href=${JSON.stringify(redirect)}</script></body></html>`;
+
+  const headers = new Headers({
+    'Content-Type': 'text/html;charset=utf-8',
+    'Set-Cookie': `gh_token=${tokenData.access_token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`,
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'strict-origin-when-cross-origin'
+  });
   headers.append('Set-Cookie', 'gh_state=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0');
   headers.append('Set-Cookie', 'gh_redirect=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0');
-  headers.append('X-Content-Type-Options', 'nosniff');
-  headers.append('X-Frame-Options', 'DENY');
-  headers.append('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-  return new Response(null, { status: 302, headers });
+  return new Response(html, { status: 200, headers });
 }
