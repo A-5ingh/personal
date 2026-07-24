@@ -9,6 +9,7 @@ Amarbir Singh is a Software Engineer based in Canada, passionate about building 
 ## Key Pages
 
 - [Home](https://singhamarbir.com/) — Main landing page with skills and introduction
+- [Writing](https://singhamarbir.com/blogs/) — Blog posts on software engineering, AI, and open-source
 - [Resume](https://cv.singhamarbir.com/) — Resume and professional experience
 - [GitHub](https://github.com/a-5ingh) — Open-source projects and contributions
 - [Email](mailto:amarbir1800@gmail.com) — Contact Amarbir

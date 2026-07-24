@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Writing by Amarbir Singh on software engineering, AI, cloud, and open-source." />
+  <title>Writing — Amarbir Singh</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"></noscript>
+  <style>
+    :root{ --bg: #ffffff; --text: #0f172a; --muted: #374151; }
+    [data-theme="dark"]{ --bg:#0b1220; --text:#f8fafc; --muted:#9ca3af; }
+    html{ background:var(--bg); color:var(--text); scroll-behavior: smooth; transition: background 0.6s ease, color 0.6s ease; }
+    body{ font-family: 'Inter', Arial, sans-serif; margin:0; padding:20px; min-height:100vh; display:flex; flex-direction:column; }
+    main{ max-width:720px; margin:0 auto; width:100%; flex:1; }
+    .back-link{ color:var(--muted); text-decoration:none; font-size:14px; }
+    .back-link:hover{ color:var(--text); }
+    h1{ font-size:2.5rem; font-weight:800; margin:1.5rem 0 1rem; }
+    .controls{ display:flex; gap:12px; margin-bottom:1.5rem; flex-wrap:wrap; align-items:center; }
+    .controls input, .controls select{ background:transparent; color:var(--text); border:1px solid rgba(128,128,128,0.3); border-radius:6px; padding:6px 10px; font-family:inherit; }
+    .controls input::placeholder{ color:var(--muted); opacity:0.6; }
+    .post{ border-bottom:1px solid rgba(128,128,128,0.2); padding:1.25rem 0; }
+    .post:last-child{ border-bottom:none; }
+    .post-date{ font-size:13px; color:var(--muted); font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace; }
+    .post-title{ font-size:1.25rem; font-weight:700; margin:0.25rem 0; display:inline-block; color:var(--text); }
+    .post-title:hover{ text-decoration:underline; }
+    .post-excerpt{ color:var(--muted); font-size:0.95rem; line-height:1.5; margin:0.25rem 0 0.5rem; }
+    .post-tags{ display:flex; gap:6px; flex-wrap:wrap; }
+    .tag{ font-size:12px; color:var(--muted); background:rgba(128,128,128,0.12); padding:2px 8px; border-radius:12px; }
+    .empty{ color:var(--muted); margin-top:2rem; }
+    footer{ text-align:center; padding:2rem 0; font-size:13px; color:var(--muted); font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <main>
+    <nav class="mb-2">
+      <a href="/" class="back-link">&larr; Back to Home</a>
+    </nav>
+
+    <h1>Writing</h1>
+
+    <div class="controls">
+      <input type="search" id="search" placeholder="Search posts..." aria-label="Search posts" />
+      <select id="sort" aria-label="Sort order">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+      </select>
+    </div>
+
+    <div id="posts"></div>
+    <div id="empty" class="empty hidden">No posts yet.</div>
+  </main>
+
+  <footer>
+    &copy; <span id="year"></span> Amarbir Singh &middot; <a href="/">Home</a>
+  </footer>
+
+  <script>
+    // Theme
+    var t = localStorage.getItem('site-theme') || 'system';
+    var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+    if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+
+    // Year
+    var yearEl = document.getElementById('year');
+    if(yearEl) yearEl.textContent = new Date().getFullYear();
+
+    // Extract post metadata from an HTML string
+    function loadPosts(){
+      return fetch('index.json')
+        .then(function(r){ if(!r.ok) throw new Error('no index'); return r.json(); })
+        .then(function(data){ return data.posts || []; });
+    }
+
+    var allPosts = [];
+    var postsContainer = document.getElementById('posts');
+    var emptyEl = document.getElementById('empty');
+    var searchInput = document.getElementById('search');
+    var sortSelect = document.getElementById('sort');
+
+    function render(posts){
+      if(!posts.length){
+        postsContainer.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+      postsContainer.innerHTML = posts.map(function(p){
+        var tagsHtml = p.tags.map(function(tag){ return '<span class="tag">' + tag + '</span>'; }).join('');
+        return '<article class="post">' +
+          '<div class="post-date">' + p.date + '</div>' +
+          '<a class="post-title" href="' + p.url + '">' + p.title + '</a>' +
+          (p.excerpt ? '<p class="post-excerpt">' + p.excerpt + '</p>' : '') +
+          (tagsHtml ? '<div class="post-tags">' + tagsHtml + '</div>' : '') +
+          '</article>';
+      }).join('');
+    }
+
+    function filterAndSort(){
+      var term = searchInput.value.toLowerCase().trim();
+      var posts = allPosts.filter(function(p){
+        if(!term) return true;
+        return (p.title + ' ' + p.excerpt + ' ' + p.tags.join(' ')).toLowerCase().indexOf(term) !== -1;
+      });
+      posts.sort(function(a,b){
+        if(sortSelect.value === 'oldest') return a.date.localeCompare(b.date) || a.slug.localeCompare(b.slug);
+        return b.date.localeCompare(a.date) || b.slug.localeCompare(a.slug);
+      });
+      render(posts);
+    }
+
+    loadPosts().then(function(posts){
+      allPosts = posts;
+      filterAndSort();
+    }).catch(function(){
+      render([]);
+    });
+
+    searchInput.addEventListener('input', filterAndSort);
+    sortSelect.addEventListener('change', filterAndSort);
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Using OpenCode for Free — Amarbir Singh</title>
+  <meta name="description" content="How to use OpenCode, an AI coding assistant, for free." />
+  <meta name="date" content="2026-07-23" />
+  <meta name="excerpt" content="Install OpenCode and run local models via Ollama for a completely free AI coding assistant." />
+  <meta name="tags" content="opencode, ai, ollama, free" />
+  <meta name="github-issue" content="1" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"></noscript>
+  <style>
+    :root{ --bg: #ffffff; --text: #0f172a; --muted: #374151; }
+    [data-theme="dark"]{ --bg:#0b1220; --text:#f8fafc; --muted:#9ca3af; }
+    html{ background:var(--bg); color:var(--text); scroll-behavior: smooth; }
+    body{ font-family: 'Inter', Arial, sans-serif; margin:0; padding:20px; min-height:100vh; }
+    .back-link{ color:var(--muted); text-decoration:none; font-size:14px; }
+    .back-link:hover{ color:var(--text); }
+    article{ max-width:720px; margin:0 auto; line-height:1.7; }
+    h1{ font-size:2rem; font-weight:800; margin-bottom:1rem; }
+    h2{ font-size:1.25rem; font-weight:600; margin-top:2rem; margin-bottom:0.75rem; }
+    p, li{ color:var(--muted); }
+    ul{ list-style:disc; padding-left:1.5rem; margin:1rem 0; }
+    code{ background:rgba(128,128,128,0.15); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+    a{ color:#2563eb; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+    footer{ margin-top:4rem; padding-top:2rem; border-top:1px solid rgba(128,128,128,0.2); font-size:13px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <nav class="mb-8">
+    <a href="/blogs/" class="back-link">&larr; Back to Writing</a>
+  </nav>
+
+  <article>
+    <h1>Using OpenCode for Free</h1>
+
+    <p>OpenCode is an AI coding assistant that runs in your terminal. It's open-source and you can use it for free.</p>
+
+    <h2>Getting Started</h2>
+    <p>Install OpenCode with:</p>
+    <code>npm install -g opencode-ai</code>
+
+    <p>Then run:</p>
+    <code>opencode</code>
+
+    <h2>Free Features</h2>
+    <ul>
+      <li>Unlimited code completions</li>
+      <li>Chat with your codebase</li>
+      <li>Multi-file editing</li>
+      <li>Local model support (via Ollama)</li>
+    </ul>
+
+    <h2>Local Models</h2>
+    <p>For completely free usage, run local models with Ollama:</p>
+    <code>ollama run llama3.1</code>
+    <p>Then configure OpenCode to use it. No API keys needed.</p>
+
+    <footer>
+      <p>Written by Amarbir Singh &middot; <a href="/">Home</a></p>
+    </footer>
+  </article>
+
+  <script>
+    var t = localStorage.getItem('site-theme') || 'system';
+    var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+    if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+  </script>
+  <script src="/scripts/blog-engagement.js" defer></script>
+</body>
+</html>
