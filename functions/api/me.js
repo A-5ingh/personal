@@ -6,7 +6,7 @@ export async function onRequestGet(context) {
   const token = getToken(request);
 
   if (!token) {
-    return jsonResponse({ authed: false, reason: 'no_token' });
+    return jsonResponse({ authed: false });
   }
 
   const res = await fetch('https://api.github.com/user', {
@@ -18,13 +18,7 @@ export async function onRequestGet(context) {
   });
 
   if (!res.ok) {
-    const errText = await res.text();
-    return jsonResponse({
-      authed: false,
-      reason: 'github_api_error',
-      status: res.status,
-      error_snippet: errText.slice(0, 200)
-    });
+    return jsonResponse({ authed: false });
   }
 
   const user = await res.json();

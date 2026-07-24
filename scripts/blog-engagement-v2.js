@@ -91,12 +91,12 @@
   }
 
   function loadComments(){
-    return fetch(apiBase + '/issues/' + issue + '/comments', { headers: { 'Accept': 'application/vnd.github+json' } })
+    return fetch(apiBase + '/issues/' + issue + '/comments?_=' + Date.now(), { headers: { 'Accept': 'application/vnd.github+json' } })
       .then(function(r){ return r.ok ? r.json() : []; });
   }
 
   function loadReactions(){
-    return fetch(apiBase + '/issues/' + issue + '/reactions', { headers: { 'Accept': 'application/vnd.github.squirrel-girl-preview+json' } })
+    return fetch(apiBase + '/issues/' + issue + '/reactions?_=' + Date.now(), { headers: { 'Accept': 'application/vnd.github.squirrel-girl-preview+json' } })
       .then(function(r){ return r.ok ? r.json() : []; });
   }
 

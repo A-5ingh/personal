@@ -1,5 +1,5 @@
 // Post a heart reaction to a GitHub issue
-import { getToken, sanitizeIssue, jsonError, checkRateLimit } from './utils.js';
+import { getToken, sanitizeIssue, jsonError, checkRateLimit, jsonResponse } from './utils.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
