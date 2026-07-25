@@ -1,0 +1,1214 @@
+Hi
+
+---
+
+Create or update `AGENTS.md` for this repository.
+
+The goal is a compact instruction file that helps future OpenCode sessions avoid mistakes and ramp up quickly. Every line should answer: "Would an agent likely miss this without help?" If not, leave it out.
+
+User-provided focus or constraints (honor these):
+
+
+## How to investigate
+
+Read the highest-value sources first:
+- `README*`, root manifests, workspace config, lockfiles
+- build, test, lint, formatter, typecheck, and codegen config
+- CI workflows and pre-commit / task runner config
+- existing instruction files (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.cursorrules`, `.github/copilot-instructions.md`)
+- repo-local OpenCode config such as `opencode.json`
+
+If architecture is still unclear after reading config and docs, inspect a small number of representative code files to find the real entrypoints, package boundaries, and execution flow. Prefer reading the files that explain how the system is wired together over random leaf files.
+
+Prefer executable sources of truth over prose. If docs conflict with config or scripts, trust the executable source and only keep what you can verify.
+
+## What to extract
+
+Look for the highest-signal facts for an agent working in this repo:
+- exact developer commands, especially non-obvious ones
+- how to run a single test, a single package, or a focused verification step
+- required command order when it matters, such as `lint -> typecheck -> test`
+- monorepo or multi-package boundaries, ownership of major directories, and the real app/library entrypoints
+- framework or toolchain quirks: generated code, migrations, codegen, build artifacts, special env loading, dev servers, infra deploy flow
+- repo-specific style or workflow conventions that differ from defaults
+- testing quirks: fixtures, integration test prerequisites, snapshot workflows, required services, flaky or expensive suites
+- important constraints from existing instruction files worth preserving
+
+Good `AGENTS.md` content is usually hard-earned context that took reading multiple files to infer.
+
+## Questions
+
+Only ask the user questions if the repo cannot answer something important. Use the `question` tool for one short batch at most.
+
+Good questions:
+- undocumented team conventions
+- branch / PR / release expectations
+- missing setup or test prerequisites that are known but not written down
+
+Do not ask about anything the repo already makes clear.
+
+## Writing rules
+
+Include only high-signal, repo-specific guidance such as:
+- exact commands and shortcuts the agent would otherwise guess wrong
+- architecture notes that are not obvious from filenames
+- conventions that differ from language or framework defaults
+- setup requirements, environment quirks, and operational gotchas
+- references to existing instruction sources that matter
+
+Exclude:
+- generic software advice
+- long tutorials or exhaustive file trees
+- obvious language conventions
+- speculative claims or anything you could not verify
+- content better stored in another file referenced via `opencode.json` `instructions`
+
+When in doubt, omit.
+
+Prefer short sections and bullets. If the repo is simple, keep the file simple. If the repo is large, summarize the few structural facts that actually change how an agent should work.
+
+If `AGENTS.md` already exists at `/Users/asingh/SourceCode/singhamarbir.com`, improve it in place rather than rewriting blindly. Preserve verified useful guidance, delete fluff or stale claims, and reconcile it with the current codebase.
+
+---
+
+Let's fix the alignment of hover to reveal skills make it fixed, it should not scroll when scrolling. Also, want to fix the skills should not overlap with each other. Right now 1 skill is shown at a time.
+
+---
+
+No I think we need to remove it from viewport. I see the look and feel of skill pills has been altered.
+
+---
+
+Doesn't look professional at all. Keep it in the main window load and not in the scroll.
+
+---
+
+Change the font of about me section completely to mono space
+
+---
+
+provide more margin between list items vertically and also check if everything looks fine on smaller screens.
+
+---
+
+We should also wrap the name by firstname on smaller screens.
+
+---
+
+About should always come on second page even on smaller screens.
+
+---
+
+Let's move skills also on second page only and provide a down ticker to scroll on page 1
+
+---
+
+Move skills under about section and center it. Keep scrolling 3 skills max at a time.
+
+---
+
+I think instead of scrolling throughout the width, it should scroll in centered 3-4 items max.
+
+---
+
+I think let's just show all the skills on hover and wrap if smaller screens. It becomes difficult to remember all skills scrolling?
+
+---
+
+Skills are not appearing correctly on hover. Let's make it hover and click both because on smartphones you can't really hover.[Image 1] Let's move skills link at the bottom.
+
+---
+
+It works now but hover/tap is not working on the link itself but little above it.
+
+---
+
+Hover on the link works but the skills moved under the link instead of top.
+
+---
+
+ah why did we move it to middle? let's keep the link and skills at the bottom only
+
+---
+
+let's configure a github actions pipeline that will deploy this index.html to cloudflare workers
+
+---
+
+why do we need github pages here in workflow?
+
+---
+
+I see we are passing projectname? is that how the cloudflare identifies where to dpeloy?
+
+---
+
+Let's take this value from secrets only and not visible in pipeline
+
+---
+
+where would it read the secrets from? Don't we need an environment or anything?
+
+---
+
+Add a contact email using [at] gmail [dot] com to avoid spammers and auto crawlers. We need another link at top next to github for Resume. You can add placehodler for both.
+
+---
+
+We don't need a link/li for contact. Instead it should just say Contact: firstname [at] gmail [dot] com the format could be wrong but you get an idea to make it safe from web crawlers
+
+---
+
+Keep this separate and not in the li items. It should be left side of the screen
+
+---
+
+yes
+
+---
+
+Let's remove the word system/dark/light and instead change the icons accordingly.
+
+---
+
+I think System should use a laptop or desktop icon instead of sun.
+
+---
+
+Add a footer stating copyright and made with ❤️ with OpenCode
+
+---
+
+Let's use multi icons instead of just heart and they should loop after few seconds.
+
+---
+
+Good the fonts needs to be bigger and mono space. Same font for Resume/Contact controls. Move the fotter little more at bottom.
+
+---
+
+No i meant the footer should me moved towards more bottom and not just padding. Position should be more bottom. Check other fonts as well if they are mono or not
+
+---
+
+No the footer is still higher positions. They should be at bottom of the page.
+
+---
+
+I think it would be great to have a rolling effect when the theme is changed from one to another. Also something catchy on first time load of page?
+
+---
+
+Transition is not smooth after intro the page appears quickly
+
+---
+
+The intro text itself is not apeearing now
+
+---
+
+Sure thing. It works. Make the page mobile or handheld device friendly.
+
+---
+
+The Intro text doesn't appear correctly on smaller screen.
+
+---
+
+The name is not wraping correctly if the screen is small. Lastname should move to new line instead of wrapping between the characs
+
+---
+
+The effect on changing screen mode should be like unwrapping from one corner to another with the change.
+
+---
+
+I see it works but the content gets hidden and appears again. I think the content should stay
+
+---
+
+Let's add llm.txt to fix agentic browsing.
+llms.txt does not follow recommendations
+If your llms.txt file does not follow recommendations, large language models may not be able to understand how you want your website to be crawled or used for training. The llms.txt file should be a Markdown file containing at least one H1 header.
+Error
+File is missing a required H1 header (e.g., "# Title").
+File does not appear to contain any links. 
+
+Also, we need to make the page SEO improved.
+ - Document does not have a meta description
+ - robots.txt is not valid 285 errors found
+
+---
+
+Any other security feature we can add or a surprise for users navigating to this website or maybe for agents?
+
+---
+
+How can the users fine the konami code easter egg?
+
+---
+
+Why arn't we using tailwind css classes instead of inline css?
+
+---
+
+Please cleanup other places too and make sure this is an instruction to not use any inline styles unless absolutely necessary.
+
+---
+
+Can you review inline styles once? i see there are many places where we are using inline styles.
+Another feature, we want to showcase the co-ordinates on mouse cursor of the screen [x, y]
+
+---
+
+No the cordinates should be next to the cursor like hover on top or side of it.
+
+---
+
+Cursor in dark mode hides the text due to same color. It should ivert cursor color or make it like light mode where text is visible.
+
+---
+
+Not working in dard mode.
+
+---
+
+Oh no I meant the text color on the page and not cordinates color. If I have text on page and the cursor is moved on top of it, it hides the text.
+
+---
+
+Still incorrect the cursor diamond is hiding the text when it hovers on top of screen text.
+
+---
+
+no I think there is an issue with the understanding. Coordinates were fine. The text on screen is hidden by the diamond cursor on hover basically it should be edged diamond and not solid filled diamond in dark mode.
+
+---
+
+Better. Now move back the co-ordinates attached to the cursor.
+
+---
+
+Can you fix the horizontal scroll? I don't think it is needed.
+
+---
+
+I also see this error in console: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>. when deployed
+
+---
+
+div#cursor-pos.fixed.font-mono.text-xs.text-[var(--muted)].opacity-50.pointer-events-none.select-none.z-50
+Background and foreground colors do not have a sufficient contrast ratio.
+
+---
+
+Fix these two performance issues:
+ - Render-blocking requests Est savings of 480 ms
+ - Network dependency tree
+   Initial Navigation
+http://localhost:8000 - 72 ms, 23.67 KiB
+/css2?family=Inter:wght@400;600;800&display=swap(fonts.googleapis.com) - 112 ms, 0.83 KiB
+…v20/UcC73FwrK….woff2(fonts.gstatic.com) - 166 ms, 47.33 KiB
+…@tailwindcss/browser@4(cdn.jsdelivr.net) - 82 ms, 68.51 KiB
+
+---
+
+Two more issues in performance:
+Use efficient cache lifetimes Est savings of 7 KiB
+Document request latency Est savings of 16 KiB
+
+---
+
+Reduce unused JavaScript Est savings of 336 KiB
+Minify JavaScript Est savings of 51 KiB
+
+---
+
+add a .gitignore file and also I think we will have to update the @.github/workflows/deploy.yml 
+Called the Read tool with the following input: {"filePath":"/Users/asingh/SourceCode/singhamarbir.com/.github/workflows/deploy.yml"}
+<path>/Users/asingh/SourceCode/singhamarbir.com/.github/workflows/deploy.yml</path>
+<type>file</type>
+<content>
+1: name: Deploy to Cloudflare Pages
+2: 
+3: on:
+4:   push:
+5:     branches: [main]
+6:   workflow_dispatch:
+7: 
+8: permissions:
+9:   contents: read
+10: 
+11: jobs:
+12:   deploy:
+13:     runs-on: ubuntu-latest
+14:     steps:
+15:       - name: Checkout
+16:         uses: actions/checkout@v4
+17: 
+18:       - name: Deploy to Cloudflare Pages
+19:         uses: cloudflare/wrangler-action@v4
+20:         with:
+21:           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+22:           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+23:           command: pages deploy . --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+
+(End of file - total 23 lines)
+</content>
+
+---
+
+python3 -m http.server 8000 -d dist/index.html I am serving and it says 404 when accessed via chrome
+
+---
+
+looks like build.sh has broken the page, content is not visible.
+
+---
+
+then remove build.sh what is the benefit here then if it is just copyhing
+
+---
+
+Review this workspace and let me know if there are any issues, suggestions or improvements?
+
+---
+
+Fix 1, 4 and 6. Leave the hint and blogs/ there. Let's add an entry for blog #1, we can keep it simple html or md format whichever is easier. It show render as clean and neat. Title of first blog is Using OpenCode for free.
+
+---
+
+I feel we need to plan the blogs part, my homepage is minimalistic. We need to show blogs using the same idea. Think of long term storing blogs everyday and then we might need search/sort functionality.
+
+---
+
+We need to build it like maintenance free.
+
+---
+
+Create a plan.md with actual steps/spec and we can hand it over to another model to do the coding and then you can review it.
+
+---
+
+No manual pushes ever.
+
+---
+
+No its fine for now.
+
+---
+
+Let's build the @plan/plan.md 
+Called the Read tool with the following input: {"filePath":"/Users/asingh/SourceCode/singhamarbir.com/plan/plan.md"}
+<path>/Users/asingh/SourceCode/singhamarbir.com/plan/plan.md</path>
+<type>file</type>
+<content>
+1: plan.md — Maintenance-Free Blog System
+2: Goal
+3: Publishing a blog post requires one action: add an HTML file to blogs/ (locally or via GitHub web UI) and push/commit. Zero manual steps beyond that — no index updates, no sitemap edits, no pushes of generated files. CI generates everything at deploy time.
+4: Core Principles
+5: 1. Generated files are deploy-only artifacts — blogs/index.json and sitemap.xml are built in CI, deployed, never committed, never touched by humans
+6: 2. Zero-build authoring — posts are plain HTML with meta tags; no markdown pipeline
+7: 3. Local preview is zero-step — client JS falls back to parsing the dev server's directory listing when index.json is absent
+8: 4. No new dependencies — generator is plain Node (no npm install); site stays single-file + CDN Tailwind
+9: File Layout
+10: blogs/
+11:   index.html                              ← NEW: listing page (URL: /blogs/)
+12:   template.html                           ← NEW: authoring template (excluded from index)
+13:   2026-07-23-using-opencode-for-free.html ← RENAMED from using-opencode-for-free.html
+14:   index.json                              ← CI-GENERATED, gitignored
+15: scripts/
+16:   gen-blog-index.js                       ← NEW: plain Node, no deps
+17: sitemap.xml                               ← CI-GENERATED, gitignored (remove from repo)
+18: Step 1 — Post convention
+19: Filename: blogs/YYYY-MM-DD-slug.html. Required in <head>:
+20: - <title>Post Title — Amarbir Singh</title> (suffix stripped by generator)
+21: - <meta name="date" content="YYYY-MM-DD"> (fallback: filename prefix)
+22: - <meta name="excerpt" content="..."> (fallback: first <p>, 160 chars)
+23: - <meta name="tags" content="ai, tools"> (optional, comma-separated)
+24: Action: rename existing post, add the three meta tags, keep content.
+25: Step 2 — blogs/template.html
+26: Copy of the renamed post with {{TITLE}}/{{DATE}}/{{EXCERPT}}/{{TAGS}} placeholders, explanatory header comment, back-link to /blogs/, shared theme script (Step 5).
+27: Step 3 — scripts/gen-blog-index.js
+28: 1. Read blogs/*.html, exclude index.html + template.html
+29: 2. Extract title/date/excerpt/tags per file (with fallbacks above)
+30: 3. Sort: date desc, then slug desc
+31: 4. Write blogs/index.json:
+32: {
+33:   "generated": "<ISO>",
+34:   "posts": [{ "slug": "...", "title": "...", "date": "...", "excerpt": "...", "tags": ["..."], "url": "/blogs/<file>.html" }]
+35: }
+36: 5. Regenerate sitemap.xml: / (1.0), /blogs/ (0.9), each post (0.8); lastmod = post date (home = today)
+37: Step 4 — blogs/index.html (listing page)
+38: Site-matching aesthetic (same head pattern, CSS vars, Inter, Tailwind CDN). Contains:
+39: - Back link to /, <h1>Writing</h1>
+40: - Search input (live-filters title/excerpt/tags) + sort toggle (Newest ⇄ Oldest)
+41: - List: date (small muted) · title (link) · excerpt · tag chips
+42: - Data loading with fallback: try /blogs/index.json; on failure fetch /blogs/, parse directory listing for YYYY-MM-DD-*.html, fetch each file, extract meta via DOMParser; both paths feed one render function; total failure → "No posts yet."
+43: - Shared theme script; no pagination
+44: Step 5 — Shared theme snippet (all blog pages)
+45: var t = localStorage.getItem('site-theme') || 'system';
+46: var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+47: if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+48: No toggle on blog pages — homepage owns theme switching.
+49: Step 6 — Homepage (index.html)
+50: 1. Nav: Blog link next to Resume → /blogs/
+51: 2. "Writing" section between About and skill-area: fetch posts (same fallback logic), render 3 newest (date + linked title + one-line excerpt), "All posts →" link; hide entire section on failure or zero posts
+52: 3. llms.txt: update blog URL, add /blogs/ to Key Pages
+53: Step 7 — CI (deploy.yml)
+54: Insert between Checkout and Deploy:
+55:       - name: Generate blog index
+56:         run: node scripts/gen-blog-index.js
+57: Deploy command unchanged (pages deploy . picks up generated files).
+58: Step 8 — Repo hygiene & docs
+59: - .gitignore: add blogs/index.json, sitemap.xml; remove committed sitemap.xml from repo
+60: - AGENTS.md: new "Blogging" section — workflow (template → YYYY-MM-DD-slug.html → push, local or web UI), note generated artifacts, note fallback handles local preview
+61: - robots.txt: unchanged (sitemap URL same)
+62: Acceptance Criteria
+63: 1. node scripts/gen-blog-index.js → valid index.json + sitemap.xml per schema; template/listing excluded
+64: 2. python3 -m http.server 8000 without running the generator → /blogs/ still lists posts via fallback; homepage Writing section works; no console errors
+65: 3. Search filters live; sort flips order
+66: 4. Post pages respect stored light/dark theme
+67: 5. New post file → appears everywhere after push, zero other edits
+68: 6. Homepage behavior otherwise unchanged (intro, hero, skills, Konami, cursor coords)
+69: 7. git status after CI-style generation → clean (artifacts ignored)
+70: Out of Scope
+71: RSS feed, pagination, tag pages, markdown authoring, llms.txt auto-generation.
+
+(End of file - total 71 lines)
+</content>
+
+---
+
+If I want to write a new blog, I simiply have to rename @blogs/template.html and then rename and add content?
+Called the Read tool with the following input: {"filePath":"/Users/asingh/SourceCode/singhamarbir.com/blogs/template.html"}
+<path>/Users/asingh/SourceCode/singhamarbir.com/blogs/template.html</path>
+<type>file</type>
+<content>
+1: <!--
+2:   Copy this file, rename it to: blogs/YYYY-MM-DD-slug.html
+3:   Example: blogs/2026-07-23-using-opencode-for-free.html
+4:   Replace {{TITLE}}, {{DATE}}, {{EXCERPT}}, {{TAGS}} and the article body.
+5: -->
+6: <!DOCTYPE html>
+7: <html lang="en">
+8: <head>
+9:   <meta charset="utf-8" />
+10:   <meta name="viewport" content="width=device-width,initial-scale=1" />
+11:   <title>{{TITLE}} — Amarbir Singh</title>
+12:   <meta name="description" content="{{EXCERPT}}" />
+13:   <meta name="date" content="{{DATE}}" />
+14:   <meta name="excerpt" content="{{EXCERPT}}" />
+15:   <meta name="tags" content="{{TAGS}}" />
+16:   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script>
+17:   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+18:   <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"></noscript>
+19:   <style>
+20:     :root{ --bg: #ffffff; --text: #0f172a; --muted: #374151; }
+21:     [data-theme="dark"]{ --bg:#0b1220; --text:#f8fafc; --muted:#9ca3af; }
+22:     html{ background:var(--bg); color:var(--text); scroll-behavior: smooth; }
+23:     body{ font-family: 'Inter', Arial, sans-serif; margin:0; padding:20px; min-height:100vh; }
+24:     .back-link{ color:var(--muted); text-decoration:none; font-size:14px; }
+25:     .back-link:hover{ color:var(--text); }
+26:     article{ max-width:720px; margin:0 auto; line-height:1.7; }
+27:     h1{ font-size:2rem; font-weight:800; margin-bottom:1rem; }
+28:     h2{ font-size:1.25rem; font-weight:600; margin-top:2rem; margin-bottom:0.75rem; }
+29:     p, li{ color:var(--muted); }
+30:     ul{ list-style:disc; padding-left:1.5rem; margin:1rem 0; }
+31:     code{ background:rgba(128,128,128,0.15); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+32:     a{ color:#2563eb; text-decoration:none; }
+33:     a:hover{ text-decoration:underline; }
+34:     footer{ margin-top:4rem; padding-top:2rem; border-top:1px solid rgba(128,128,128,0.2); font-size:13px; color:var(--muted); }
+35:   </style>
+36: </head>
+37: <body>
+38:   <nav class="mb-8">
+39:     <a href="/blogs/" class="back-link">&larr; Back to Writing</a>
+40:   </nav>
+41: 
+42:   <article>
+43:     <h1>{{TITLE}}</h1>
+44: 
+45:     <p>Write your intro paragraph here.</p>
+46: 
+47:     <h2>Section Title</h2>
+48:     <p>Content goes here.</p>
+49: 
+50:     <footer>
+51:       <p>Written by Amarbir Singh &middot; <a href="/">Home</a></p>
+52:     </footer>
+53:   </article>
+54: 
+55:   <script>
+56:     var t = localStorage.getItem('site-theme') || 'system';
+57:     var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+58:     if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+59:   </script>
+60: </body>
+61: </html>
+
+(End of file - total 61 lines)
+</content>
+
+---
+
+No what I want now is to understand how can I make a love/like button on blog and keep track of counter for each blog without paying for any service?
+
+---
+
+So with github issues, folks can also comments? but it will required github login?
+
+---
+
+tell me more about the KV service?
+
+---
+
+Let's build github issues but should be minimalistic in design.
+
+---
+
+linked first created issue but when I click on heart it takes me to issue instead of reaction. Comments section also takes there. It should basically pull and show comments and on comment it should show a textbox with post comment.
+
+---
+
+Let;s do option 2
+
+---
+
+performed the setup but the like or comment if failing and I see request is blocked: v4513226cdae34746b4dedf0b4dfa099e1781791509496	(blocked:other)	script	blogs/:123
+
+---
+
+Correct the repo url once. The correct url should be: https://github.com/a-5ingh/personal/issues/1 and not https://github.com/a-5ingh/singhamarbir.com/issues/1
+
+---
+
+Comments link still shows: https://github.com/a-5ingh/singhamarbir.com/issues/1 after deployment
+
+---
+
+Still same even I see the failing requests with wrong url: 
+https://api.github.com/repos/a-5ingh/singhamarbir.com/issues/1/reactions
+
+---
+
+what about other files? arn't they cached just like this one?
+
+---
+
+Links are working now correctly but functionality isn;t. No likes/comments are postable and I posted a like on issue that ggot fetched.
+
+---
+
+Ay settings in oauth app that is needed? to allow device flow auth?
+
+---
+
+api debug is failing. {"authed":false,"message":"No gh_token cookie"}
+It asks to login into the oauth app and it is sucessful but after that like or comment doesn't work.
+
+---
+
+Review the security of the app and website carefully, there shouldn't be any sort of attacks possible using it. It should be highly secure.
+
+---
+
+No, still same issue. Not able to like or comment. The sign in happens with sign in to github sucessfully. ALready posted comments and likes are fetched.
+
+---
+
+[Info] Content blocker prevented frame displaying https://singhamarbir.com/blogs/2026-07-23-using-opencode-for-free from loading a resource from https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496
+[Error] API ping failed: – TypeError: undefined is not an object (evaluating 'options.method') — blog-engagement-v2.js:61
+TypeError: undefined is not an object (evaluating 'options.method') — blog-engagement-v2.js:61
+	(anonymous function) (blog-engagement-v2.js:228) 
+
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": false,
+  "tokenPrefix": null,
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a1fed963ed80f46c-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+}
+
+---
+
+I was authenticated and after sign in only I went to api/inspect.
+
+---
+
+{"hasTestCookie":true,"cookieHeader":"gh_test=dummy-value","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"} 
+
+yes it reverted to action=check
+
+Now I don't see sign in option in blog, it says Comments API unavailable. Check that Cloudflare Pages Functions are deployed and environment variables are set.
+
+---
+
+Error 1101 Ray ID: a1ff1c82a902a2d9-YYZ • 2026-07-24 01:22:01 UTC
+Worker threw exception
+What happened?
+You've requested a page on a website (singhamarbir.com) that is on the Cloudflare network. An unknown error occurred while rendering the page.
+What can I do?
+If you are the owner of this website:
+refer to Workers - Errors and Exceptions and check Workers Logs for singhamarbir.com. 
+
+Now sign in is failing and /api/nspect output is
+
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": false,
+  "tokenPrefix": null,
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a1ff1de87876f54f-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+}
+
+---
+
+token is still false. able to login. 
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": false,
+  "tokenPrefix": null,
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a1ff22a0bb75ebc0-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+} 
+
+After changing callback URL
+
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": false,
+  "tokenPrefix": null,
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a1ff24cbed25ae18-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+}
+
+---
+
+I see this error while login: Beacon API cannot load https://api.github.com/_private/browser/stats. Reached maximum amount of queued data of 64Kb for keepalive requests
+
+Still same behavior, login happens but no comments on posting. 
+on inspect
+
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": false,
+  "tokenPrefix": null,
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a1ff386c2aaf4fcb-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+} 
+
+After changing debug=1 on callback url:
+
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": false,
+  "tokenPrefix": null,
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a1ff3b9c49b28ea1-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+}
+
+---
+
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": false,
+  "tokenPrefix": null,
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a1ff51e64e98543d-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+} 
+
+Same. I think we are going in circles here. The issue is something silly. Can you summarize what we tried and outputs of each trial and error or debug?
+
+---
+
+Hi
+
+---
+
+Hi
+
+---
+
+Hello
+
+---
+
+Continue if you have next steps, or stop and ask for clarification if you are unsure how to proceed.
+
+---
+
+did it fix?
+
+---
+
+did it fix?
+
+---
+
+Check again once the files
+
+---
+
+the issue still persists. Can I not check this locally once?
+
+---
+
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": false,
+  "tokenPrefix": null,
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a200b78f087b378a-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+} 
+Same I think output
+
+---
+
+but is this secure?
+
+---
+
+it didn't post the comment but i see there is difference now
+
+{
+  "url": "https://singhamarbir.com/api/inspect",
+  "method": "GET",
+  "origin": null,
+  "referer": null,
+  "secFetchSite": "none",
+  "sameOrigin": true,
+  "hasToken": true,
+  "tokenPrefix": "gho_mZ3o...",
+  "headers": {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "accept-encoding": "gzip, br",
+    "accept-language": "en-US,en;q=0.9",
+    "cf-connecting-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "cf-connecting-o2o": "1",
+    "cf-ipcountry": "CA",
+    "cf-ray": "a200bd280b1bac6f-YYZ",
+    "cf-visitor": "{\"scheme\":\"https\"}",
+    "connection": "Keep-Alive",
+    "cookie": "gh_token=***; ...",
+    "host": "singhamarbir.com",
+    "priority": "u=0, i",
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+    "x-forwarded-for": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d",
+    "x-forwarded-proto": "https",
+    "x-real-ip": "2607:fea8:e61:eb00:74a1:2479:a92f:9f4d"
+  }
+}
+
+---
+
+there is no message, but on click the page posts and refreshes
+
+---
+
+That is what I am saying on clicking the page refreshes and i don't see the post /api/comment request
+
+---
+
+Also, I notice Sign in with GitHub link is still same even after signed in successfullt
+
+---
+
+That is what I am saying on clicking the page refreshes and i don't see the post /api/comment request. I noticed that page refreshes first before calling the /api/comment
+
+---
+
+yes /api/me is called and it returns {
+    "authed": false
+}
+
+---
+
+Are you sure? Can you also suggest why there is full page reload when clicked on post comment button?
+
+---
+
+with 500ms it is still returning false and these are in conole
+[Log] [engagement] fetch: – "/api/me" – "GET" (blog-engagement-v2.js, line 62)
+[Log] [engagement] response: – "/api/me" – 200 (blog-engagement-v2.js, line 64)
+
+---
+
+No the issue is something else. As soon as I login successfully into github and it redirects back. I still see sign in into github link and at that time itself /api/me is false. So posting a comment will come later.
+
+---
+
+No the issue is something else. As soon as I login successfully into github and it redirects back. I still see sign in into github link and at that time itself /api/me is false. So posting a comment will come later.
+
+---
+
+No the issue is something else. As soon as I login successfully into github and it redirects back. I still see sign in into github link and at that time itself /api/me is false. So posting a comment will come later.
+
+---
+
+{
+    "authed": false,
+    "reason": "github_api_error",
+    "status": 403,
+    "error_snippet": "\r\nRequest forbidden by administrative rules. Please make sure your request has a User-Agent header (https://docs.github.com/en/rest/overview/resources-in-the-rest-api#user-agent-required). Check https"
+} 
+
+on sign it I see this response now.
+header do have Cookie: gh_token=gho_JgrW
+
+---
+
+Great finally working. After posting the comment I have to refresh the whole page for the comment to appear. Also, we need to clean up all the debug/testing statements added and make sure security is not compromised.
+
+---
+
+I see like is failing when I click on it.
+
+Like failed: <!DOCTYPE html> <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]--> <!--[if IE 7]> <html class="no-js ie7 oldie" lang="en-US"> <![endif]--> <!--[if IE 8]> <html class="no-js ie8 oldie" lang="en-US"> <![endif]--> <!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]--> <head> <title>Worker threw exception | singhamarbir.com | Cloudflare</title> <meta charset="UTF-8" /> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> <meta http-equiv="X-UA-Compatible" content="IE=Edge" /> <meta name="robots" content="noindex, nofollow" /> <meta name="viewport" content="width=device-width,initial-scale=1" /> <link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/cf.errors.css" /> <!--[if lt IE 9]><link rel="stylesheet" id='cf_styles-ie-css' href="/cdn-cgi/styles/cf.errors.ie.css" /><![endif]--> <style>body{margin:0;padding:0}</style> <!--[if gte IE 10]><!--> <script> if (!navigator.cookieEnabled) { window.addEventListener('DOMContentLoaded', function () { var cookieEl = document.getElementById('cookie-alert'); cookieEl.style.display = 'block'; }) } </script> <!--<![endif]--> </head> <body> <div id="cf-wrapper"> <div class="cf-alert cf-alert-error cf-cookie-error" id="cookie-alert" data-translate="enable_cookies">Please enable cookies.</div> <div id="cf-error-details" class="cf-error-details-wrapper"> <div class="cf-wrapper cf-header cf-error-overview"> <h1> <span class="cf-error-type" data-translate="error">Error</span> <span class="cf-error-code">1101</span> <small class="heading-ray-id">Ray ID: a20444bc183e61e8-YYZ &bull; 2026-07-24 16:23:17 UTC</small> </h1> <h2 class="cf-subheadline" data-translate="error_desc">Worker threw exception</h2> </div><!-- /.header --> <section></section><!-- spacer --> <div class="cf-section cf-wrapper"> <div class="cf-columns two"> <div class="cf-column"> <h2 data-translate="what_happened">What happened?</h2> <p>You've requested a page on a website (singhamarbir.com) that is on the <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=error_100x" target="_blank">Cloudflare</a> network. An unknown error occurred while rendering the page.</p> </div> <div class="cf-column"> <h2 data-translate="what_can_i_do">What can I do?</h2> <p><strong>If you are the owner of this website:</strong><br />refer to <a href="https://developers.cloudflare.com/workers/observability/errors/" target="_blank">Workers - Errors and Exceptions</a> and check Workers Logs for singhamarbir.com.</p> </div> </div> </div><!-- /.section --> <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300"> <p class="text-13"> <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">a20444bc183e61e8-YYZ</strong></span> <span class="cf-footer-separator sm:hidden">&bull;</span> <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1"> Your IP: <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button> <span class="hidden" id="cf-footer-ip">2607:fea8:e61:eb00:e1a2:73d5:38d7:e321</span> <span class="cf-footer-separator sm:hidden">&bull;</span> </span> <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing" id="brand_link" target="_blank">Cloudflare</a></span> </p> <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script> </div><!-- /.error-footer --> </div><!-- /#cf-error-details --> </div><!-- /#cf-wrapper --> <script> window._cf_translation = {}; </script> </body> </html>
+
+---
+
+I was wondering instead of I creating the html for each and every blog. Why don't we integrate it with issue itself? I will create an issue with description as the blog in MD format and pipeline will run to publish it as html and deploy? Don't make a code change but tell me how is this idea? what is the difficulity level or maintenance for it?
+
+---
+
+I see an issue with like button, it works to like but if i have already like and I click again it does not unlike it means it is one way only. The heart icon of like button should be filled with red color if like count > 0.
+
+---
+
+Let's go back to issues -> blog plan and refine it a bit.
+
+---
+
+switching gear back to like issue. The like works but clicking the button again doesn't reduce the like count. Also, I noticed sign out is not clearning the cookies correctly and the session becomes active on hard refresh.
+
+---
+
+Are we storing any information in session about user auth or anything related to github?
+
+---
+
+Revert the like change I think it is working. I didn't hard refresh earlier.
+
+---
+
+Sign out issue is still there. Unless I sign out from github I can sign in automatically.
+
+---
+
+it does show Sign in with Github.
+
+---
+
+No let's not revoke the grant because it will keep asking for grant all the time.
+
+---
+
+Let's go back to the plan now
+
+---
+
+Let's go back to the plan now
+
+---
+
+Let's build it without breaking anything.
+
+---
+
+Tell me in detail, I am creating a new issue, what needs to be make sure.
+
+---
+
+Can't we have a deployment trigger if a new issue gets created with blog and published labels?
+
+---
+
+created issue didn't appear correctly. I see in blogs:
+{{DATE}}
+{{TITLE}}
+{{EXCERPT}}
+
+{{TAGS}} 
+
+Fetching blog issues...
+Found 1 issue(s) with blog label.
+Processing issue #2: How I built this *** blog using OpenCode
+  Wrote 2026-07-24-how-i-built-this-***-blog-using-opencode.html
+Done.
+
+---
+
+Now it works. I am thinking do we publish all the blogs whenever CI runs? with time the # of blogs will increase so we need a mechanism to publish blogs that are edited/touched.
+
+---
+
+how does it work? which files does it compare against?
+
+---
+
+issue to html will be generated on runtime correct? it is never stored anywhere?
+
+---
+
+without committing, what are our options to correctly check and publish only the ones which changed?
+
+---
+
+what will happen when I push a code change? does it republish everything? or a blog will be re-published only when it is edited? If it is the later case what if I want to change the structure of all the blogs?
+
+---
+
+ok let me test it. What will happen if I publish 1000+ blogs?
+
+---
+
+when will the current design break?
+
+---
+
+yes add the pagination
+
+---
+
+I need content for my blog. Check the session logs and extract critical information and make it sound real human. I will review and re-write in my words. The blog is about: How I built this personal blog using OpenCode
+
+It is important to get the models used to build it, in/out tokens, cost etc. Don't make up any numbers if you don't know.
+
+---
+
+I see another issue while convering md to html. Looks like the tables are not converted correctly.
+
+---
+
+Another issue with number list in markdown is not appearing correctly. The numbers are lost when converted to html
+
+---
+
+Works now. I need to optimize the website singhamarbir.com to rank high or top on google when someone searches Amarbir Singh. Right now only singhamarbir search helps in finding it. what can I do to improve?
+
+---
+
+how is adding "based in canada" helps here?
+
+---
+
+yes don't leak PII ha
+
+---
+
+?
+
+---
+
+How much time will it take for google to index it and our seo to work?
+
+---
+
+and can we stop github bot to post comments about published blog on the issue?
+
+---
+
+I forgot to ask one think what happens when I delete the issue? does it remove the blog entry from published site? don't make any code change but explain me the flow
+
+---
+
+what if I change the template? that will force to re-publish all and then deleted issue will be gone?
+
+---
+
+How about the label published? is it necessary/required on issue?
