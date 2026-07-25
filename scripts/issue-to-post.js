@@ -113,15 +113,6 @@ async function addLabel(issueNumber) {
   });
 }
 
-async function addComment(issueNumber, body) {
-  const url = `https://api.github.com/repos/${REPO}/issues/${issueNumber}/comments`;
-  await fetch(url, {
-    method: 'POST',
-    headers: { ...headers, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ body })
-  });
-}
-
 async function processIssue(issue, template) {
   const hasPublishedLabel = (issue.labels || []).some(l => l.name === 'published');
   const slug = slugify(issue.title);
@@ -155,9 +146,12 @@ async function processIssue(issue, template) {
   const { marked } = await import('marked');
   const bodyHtml = await marked.parse(content);
 
+  const postUrl = `${SITE_URL}${publicUrl}`;
+
   // Fill template (replaceAll for placeholders that appear multiple times)
   let html = template;
   html = html.replaceAll('{{TITLE}}', issue.title);
+  html = html.replaceAll('{{URL}}', postUrl);
   html = html.replaceAll('{{DATE}}', date);
   html = html.replaceAll('{{EXCERPT}}', excerpt);
   html = html.replaceAll('{{TAGS}}', tags);
@@ -168,11 +162,10 @@ async function processIssue(issue, template) {
   fs.writeFileSync(filePath, html, 'utf8');
   console.log(`  Wrote ${filename}`);
 
-  // Add published label and comment if first time
+  // Add published label if first time
   if (!hasPublishedLabel) {
     await addLabel(issue.number);
-    await addComment(issue.number, `Published at ${SITE_URL}${publicUrl}`);
-    console.log(`  Added published label and comment to issue #${issue.number}`);
+    console.log(`  Added published label to issue #${issue.number}`);
   }
 }
 

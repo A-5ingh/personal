@@ -1,6 +1,6 @@
 <!--
   Copy this file to: blogs/YYYY-MM-DD-slug.html
-  For manual posts: replace {{TITLE}}, {{DATE}}, {{EXCERPT}}, {{TAGS}}, {{ISSUE}}, {{CONTENT}}.
+  For manual posts: replace {{TITLE}}, {{DATE}}, {{EXCERPT}}, {{TAGS}}, {{ISSUE}}, {{URL}}, {{CONTENT}}.
   For issue-based posts: the issue-to-post script fills these automatically.
   Create a GitHub issue with label "blog" to auto-publish.
 -->
@@ -10,11 +10,44 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{{TITLE}} — Amarbir Singh</title>
+  <link rel="canonical" href="{{URL}}" />
   <meta name="description" content="{{EXCERPT}}" />
   <meta name="date" content="{{DATE}}" />
   <meta name="excerpt" content="{{EXCERPT}}" />
   <meta name="tags" content="{{TAGS}}" />
   <meta name="github-issue" content="{{ISSUE}}" />
+  <meta property="og:title" content="{{TITLE}} — Amarbir Singh" />
+  <meta property="og:description" content="{{EXCERPT}}" />
+  <meta property="og:url" content="{{URL}}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="https://singhamarbir.com/og-image.png" />
+  <meta property="og:locale" content="en_CA" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{TITLE}} — Amarbir Singh" />
+  <meta name="twitter:description" content="{{EXCERPT}}" />
+  <meta name="twitter:image" content="https://singhamarbir.com/og-image.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{TITLE}}",
+    "description": "{{EXCERPT}}",
+    "datePublished": "{{DATE}}",
+    "author": {
+      "@type": "Person",
+      "name": "Amarbir Singh",
+      "url": "https://singhamarbir.com"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Amarbir Singh"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{{URL}}"
+    }
+  }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"></noscript>
