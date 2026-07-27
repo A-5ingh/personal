@@ -1,0 +1,1 @@
+The movement of characters on frontpage i.e. the name should be replaced by A physics-based text animation where each letter reacts to cursor proximity. Letters are pushed away (or attracted) in real-time with spring dynamics, creating an interactive magnetic force-field effect.
