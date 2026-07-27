@@ -56,6 +56,13 @@ npx serve .
 - Edit an issue → next push or instant trigger regenerates the post
 - Remove `blog` label → post stays (does not delete)
 
+### Images in blog posts
+
+- Add images to issue body using `![alt text](image-url)` Markdown syntax
+- Drag-and-drop an image into a GitHub issue to auto-upload it — the URL will be embedded in the post
+- Images render as responsive (`max-width: 100%`), lazy-loaded, with rounded corners
+- GitHub image URLs are cleaned of JWT/auth tokens during conversion
+
 ### Instant publishing on issue create/edit
 
 - The deploy workflow triggers on `issues: [opened, edited, labeled]` in addition to `push`

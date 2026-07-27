@@ -144,7 +144,14 @@ async function processIssue(issue, template) {
 
   // Convert Markdown to HTML
   const { marked } = await import('marked');
-  const bodyHtml = await marked.parse(content);
+  const renderer = new marked.Renderer();
+  const origImage = renderer.image.bind(renderer);
+  renderer.image = function({ href, title, text, tokens }) {
+    const src = href.replace(/\?.*$/, '');
+    const result = origImage({ href: src, title, text, tokens });
+    return result.slice(0, -1) + ' loading="lazy">';
+  };
+  const bodyHtml = await marked.parse(content, { renderer });
 
   const postUrl = `${SITE_URL}${publicUrl}`;
 
