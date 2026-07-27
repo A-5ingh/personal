@@ -86,10 +86,6 @@
     @media (max-width: 640px) {
       #hero .char.space { width:100%; height:0; display:block; }
     }
-    /* tilt classes: alternate char tilts left/right on hover */
-    #hero .char.tilt-left { transform: rotate(-18deg) translateY(6px) scale(.99); opacity:.95; }
-    #hero .char.tilt-right { transform: rotate(18deg) translateY(6px) scale(.99); opacity:.95; }
-
     /* layout tweaks */
     header { background: transparent; font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace; }
     nav a, nav button { color: var(--muted); }
@@ -324,35 +320,86 @@
       var hero = document.getElementById('hero'); if(!hero) return;
       splitToChars(hero);
       var chars = Array.prototype.slice.call(hero.querySelectorAll('.char'));
-      chars.forEach(function(c,i){ var d=(i*0.03+Math.random()*0.04).toFixed(3)+'s'; c.style.transition='transform 0.45s cubic-bezier(.2,.9,.3,1), opacity 0.6s ease '+d+', color 0.12s ease'; c.style.transitionDelay=d; });
+
+      // Initial fade-in (no transform transition — physics handles that)
+      chars.forEach(function(c,i){
+        var d=(i*0.03+Math.random()*0.04).toFixed(3)+'s';
+        c.style.transition='opacity 0.6s ease '+d+', color 0.12s ease';
+      });
       requestAnimationFrame(function(){ document.querySelectorAll('.fade-in').forEach(function(el){ el.classList.add('visible'); }); });
 
-      chars.forEach(function(c){
-        c.addEventListener('mouseenter', function(){
-          var isOdd = c.classList.contains('odd');
-          c.classList.add(isOdd ? 'tilt-right' : 'tilt-left');
-          try{ var th = getEffectiveTheme(); c.style.color = monoShade(th); }catch(e){}
-          playPop(700+Math.random()*300,0.06,0.06);
-        });
-        c.addEventListener('mouseleave', function(){
-          c.classList.remove('tilt-right','tilt-left');
-          c.style.color = '';
-        });
-        c.addEventListener('touchstart', function(e){
-          e.preventDefault();
-          var isOdd2 = c.classList.contains('odd');
-          c.classList.add(isOdd2 ? 'tilt-right' : 'tilt-left');
-          try{ var th2 = getEffectiveTheme(); c.style.color = monoShade(th2); }catch(e){}
-          playPop(750,0.06,0.06);
-          setTimeout(function(){ c.classList.remove('tilt-right','tilt-left'); c.style.color = ''; },420);
-        });
+      // Physics state per character
+      var state = chars.map(function(){ return {x:0, y:0, vx:0, vy:0}; });
+      var phys = {
+        spring: 0.055, damping: 0.85,
+        repelRadius: 150, repelForce: 14,
+        cx: -9999, cy: -9999, active: false
+      };
+
+      // Cursor tracking
+      hero.addEventListener('mousemove', function(e){
+        phys.cx = e.clientX; phys.cy = e.clientY; phys.active = true;
       });
+      hero.addEventListener('mouseleave', function(){ phys.active = false; });
+      hero.addEventListener('touchmove', function(e){
+        var t = e.touches[0]; if(t){ phys.cx = t.clientX; phys.cy = t.clientY; phys.active = true; }
+      }, {passive:true});
+      hero.addEventListener('touchend', function(){ phys.active = false; });
 
-      var heroBox = hero;
-      heroBox.addEventListener('mousemove', function(ev){ var rect=heroBox.getBoundingClientRect(); var x=ev.clientX-rect.left; chars.forEach(function(c){ var r=c.getBoundingClientRect(); var cx=r.left + r.width/2 - rect.left; var dist=Math.abs(cx-x); if(dist<80){ var intensity=Math.max(0,(80-dist)/80); var dir = c.classList.contains('odd') ? 1 : -1; c.style.transition='transform 0.06s linear'; c.style.transform='rotate(' + (intensity*18*dir) + 'deg) translateY(' + (intensity*6) + 'px)'; var last=c.__lastPopTime||0; var now=Date.now(); if(intensity>0.8 && now-last>260){ playPop(680+Math.random()*240,0.04,0.04); c.__lastPopTime=now; } } else { c.style.transform=''; c.style.transition=''; } }); });
-      heroBox.addEventListener('mouseleave', function(){ chars.forEach(function(c){ c.style.transform=''; c.style.transition=''; c.classList.remove('tilt-right','tilt-left'); }); });
+      // Char offsets from hero center (stable in document flow)
+      var offsets = [];
+      function calcOffsets(){
+        var hr = hero.getBoundingClientRect();
+        var hx = hr.left + hr.width/2, hy = hr.top + hr.height/2;
+        offsets = chars.map(function(c){
+          if(c.classList.contains('space')) return null;
+          var r = c.getBoundingClientRect();
+          return {dx: r.left + r.width/2 - hx, dy: r.top + r.height/2 - hy};
+        });
+      }
+      calcOffsets();
+      window.addEventListener('resize', calcOffsets);
 
-      // theme button hookup already added earlier
+      // Physics tick
+      function tick(){
+        var hr = hero.getBoundingClientRect();
+        var hx = hr.left + hr.width/2, hy = hr.top + hr.height/2;
+
+        for(var i=0;i<chars.length;i++){
+          var s = state[i];
+          var off = offsets[i];
+          if(!off) continue;
+
+          // Spring toward rest
+          s.vx += -phys.spring * s.x;
+          s.vy += -phys.spring * s.y;
+          s.vx *= phys.damping;
+          s.vy *= phys.damping;
+
+          // Magnetic repulsion
+          if(phys.active){
+            var lx = hx + off.dx + s.x, ly = hy + off.dy + s.y;
+            var dx = phys.cx - lx, dy = phys.cy - ly;
+            var dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist < phys.repelRadius && dist > 1){
+              var str = (phys.repelRadius - dist) / phys.repelRadius;
+              var f = phys.repelForce * str * str;
+              s.vx += -(dx/dist) * f;
+              s.vy += -(dy/dist) * f;
+            }
+          }
+
+          s.x += s.vx;
+          s.y += s.vy;
+
+          var rot = Math.max(-18, Math.min(18, s.vx * 3));
+          chars[i].style.transform = 'translate3d(' + s.x.toFixed(1) + 'px,' + s.y.toFixed(1) + 'px,0) rotate(' + rot.toFixed(1) + 'deg)';
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      setTimeout(function(){ calcOffsets(); tick(); }, 120);
     });
 
     // smooth anchor scrolling
