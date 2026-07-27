@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "5d528fe12037",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "AGENTS.md",
+    "blogs/2026-07-23-using-opencode-for-free.html",
+    "blogs/template.html",
+    "scripts/issue-to-post.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/5d/528fe12037/0/metadata.json",
+      "transcript": "/5d/528fe12037/0/full.jsonl",
+      "compact_transcript": "/5d/528fe12037/0/transcript.jsonl",
+      "content_hash": "/5d/528fe12037/0/content_hash.txt",
+      "prompt": "/5d/528fe12037/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 43875,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 743808,
+    "output_tokens": 4371,
+    "api_call_count": 36
+  }
+}
