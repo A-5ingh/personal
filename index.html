@@ -97,7 +97,8 @@
     /* make icons clearer and bigger */
     nav svg { width: 24px; height: 24px; }
     .theme-label { font-size: 13px; }
-    .hero-wrap { min-height: calc(100vh - 120px); display:flex; align-items:center; justify-content:center; }
+    .hero-wrap { position:relative; min-height: calc(100vh - 120px); display:flex; align-items:center; justify-content:center; }
+    #particle-canvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
 
     /* skill cloud (bottom of page) */
     #skill-area { width:100%; max-width:64rem; margin:0 auto; pointer-events:auto; padding:2rem 0 4rem; }
@@ -160,11 +161,12 @@
   </header>
 
   <main class="hero-wrap px-6 text-center">
-    <div>
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
+    <div class="relative z-10">
       <h1 id="hero" class="text-5xl sm:text-7xl md:text-9xl leading-tight" aria-label="Amarbir Singh">Amarbir<br class="sm:hidden"> Singh</h1>
       <p id="tagline" class="mt-3 text-base md:text-lg text-gray-700 fade-in">Curious. Architect. Engineer.</p>
     </div>
-    <a href="#about" class="scroll-hint" aria-label="Scroll down">
+    <a href="#about" class="scroll-hint relative z-10" aria-label="Scroll down">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
     </a>
   </main>
@@ -401,6 +403,138 @@
 
       setTimeout(function(){ calcOffsets(); tick(); }, 120);
     });
+
+    // --- PARTICLE FIELD: elliptical dust cloud hugging the name, hollow center ---
+    (function(){
+      var canvas = document.getElementById('particle-canvas');
+      if(!canvas) return;
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(reduceMotion){ canvas.style.display = 'none'; return; }
+
+      var ctx = canvas.getContext('2d');
+      var DPR = Math.min(window.devicePixelRatio || 1, 2);
+      var W = 0, H = 0, CX = 0, CY = 0, R_IN = 0, R_OUT = 0, ASPECT = 0.5;
+      var particles = [];
+      var mouse = { x: -9999, y: -9999, active: false };
+      var running = false;
+      var raf = null;
+      var time = 0, last = 0;
+
+      function bgColor(){
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        return dark ? '11,18,32' : '255,255,255';
+      }
+      function dotColor(){
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        return dark ? '239,68,68' : '185,28,28';
+      }
+
+      // normalized position across band: densest toward the inner/center, fading outward
+      function sampleT(){
+        for(var tries = 0; tries < 60; tries++){
+          var t = Math.random();
+          if(Math.random() < Math.cos(t * Math.PI / 2)) return t;
+        }
+        return 0;
+      }
+
+      function resize(){
+        var rect = canvas.parentElement.getBoundingClientRect();
+        W = rect.width; H = rect.height;
+        canvas.width = Math.round(W * DPR);
+        canvas.height = Math.round(H * DPR);
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+        CX = W / 2; CY = H / 2;
+        R_IN = W * 0.2325;
+        R_OUT = W * 0.30;
+
+        var count = Math.min(120, Math.max(60, Math.round(W * H / 11000)));
+        particles = [];
+        for(var i = 0; i < count; i++){
+          var t = sampleT();
+          var r0 = R_IN + (R_OUT - R_IN) * t;
+          var th = Math.random() * Math.PI * 2;
+          var hx = CX + Math.cos(th) * r0;
+          var hy = CY + Math.sin(th) * r0 * ASPECT;
+          particles.push({
+            hx: hx, hy: hy, t: t, th: th,
+            x: hx, y: hy,
+            vx: (Math.random() - 0.5) * 0.12,
+            vy: (Math.random() - 0.5) * 0.12,
+            phase: Math.random() * Math.PI * 2,
+            r: 0.8 + Math.random() * 1.6
+          });
+        }
+      }
+
+      function step(now){
+        if(!running) return;
+        if(!last) last = now;
+        var dt = (now - last) / 1000; last = now;
+        if(dt > 0.05) dt = 0.05;
+        time += dt;
+        var breath = 1 + 0.02 * Math.sin(time * 0.4);
+
+        var bg = bgColor();
+        var dot = dotColor();
+        ctx.fillStyle = 'rgba(' + bg + ',0.2)';
+        ctx.fillRect(0, 0, W, H);
+
+        for(var i = 0; i < particles.length; i++){
+          var p = particles[i];
+          var r0 = (R_IN + (R_OUT - R_IN) * p.t) * breath;
+          var hx = CX + Math.cos(p.th) * r0;
+          var hy = CY + Math.sin(p.th) * r0 * ASPECT;
+
+          p.vx += (hx - p.x) * 0.0009 + (Math.random() - 0.5) * 0.01;
+          p.vy += (hy - p.y) * 0.0009 + (Math.random() - 0.5) * 0.01;
+          p.vx *= 0.96; p.vy *= 0.96;
+
+          if(mouse.active){
+            var dx = p.x - mouse.x, dy = p.y - mouse.y;
+            var d2 = dx * dx + dy * dy;
+            if(d2 < 160000 && d2 > 1){
+              var d = Math.sqrt(d2);
+              var f = (400 - d) / 400 * 0.8;
+              p.vx += (dx / d) * f; p.vy += (dy / d) * f;
+            }
+          }
+
+          p.x += p.vx; p.y += p.vy;
+
+          var tw = 0.5 + 0.5 * Math.sin(p.phase + time * 1.5);
+          ctx.fillStyle = 'rgba(' + dot + ',' + (0.5 + 0.4 * tw).toFixed(3) + ')';
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+        }
+
+        raf = requestAnimationFrame(step);
+      }
+
+      var heroWrap = canvas.parentElement;
+      heroWrap.addEventListener('mousemove', function(e){
+        var r = heroWrap.getBoundingClientRect();
+        mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.active = true;
+      });
+      heroWrap.addEventListener('mouseleave', function(){ mouse.active = false; });
+      heroWrap.addEventListener('touchmove', function(e){
+        var t = e.touches[0];
+        if(t){ var r = heroWrap.getBoundingClientRect(); mouse.x = t.clientX - r.left; mouse.y = t.clientY - r.top; mouse.active = true; }
+      }, {passive:true});
+      heroWrap.addEventListener('touchend', function(){ mouse.active = false; });
+
+      window.addEventListener('resize', function(){ resize(); });
+      document.addEventListener('visibilitychange', function(){
+        if(document.hidden){ running = false; if(raf) cancelAnimationFrame(raf); }
+        else if(!running){ running = true; last = 0; resize(); raf = requestAnimationFrame(step); }
+      });
+
+      running = true;
+      resize();
+      raf = requestAnimationFrame(step);
+    })();
 
     // smooth anchor scrolling
     document.querySelectorAll('a[href^="#"]').forEach(function(a){ a.addEventListener('click', function(e){ var t=document.querySelector(this.getAttribute('href')); if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth', block:'start'}); } }); });
