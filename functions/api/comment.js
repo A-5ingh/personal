@@ -29,7 +29,7 @@ export async function onRequestPost(context) {
   const rateLimited = checkRateLimit(request, 'comment');
   if (rateLimited) return rateLimited;
 
-  const res = await fetch(`https://api.github.com/repos/a-5ingh/personal/issues/${issue}/comments`, {
+  const res = await fetch(`https://api.github.com/repo/singhamarbir/personal/issues/${issue}/comments`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,

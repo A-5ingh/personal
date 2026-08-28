@@ -8,7 +8,7 @@ const path = require('path');
 const BLOGS_DIR = path.join(__dirname, '..', 'blogs');
 const TEMPLATE_PATH = path.join(BLOGS_DIR, 'template.html');
 const SITE_URL = 'https://singhamarbir.com';
-const REPO = 'a-5ingh/personal';
+const REPO = 'singhamarbir/personal';
 const TOKEN = process.env.GITHUB_TOKEN;
 
 if (!TOKEN) {

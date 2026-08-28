@@ -24,7 +24,7 @@ export async function onRequestPost(context) {
   const rateLimited = checkRateLimit(request, 'like');
   if (rateLimited) return rateLimited;
 
-  const res = await fetch(`https://api.github.com/repos/a-5ingh/personal/issues/${issue}/reactions`, {
+  const res = await fetch(`https://api.github.com/repos/singhamarbir/personal/issues/${issue}/reactions`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
