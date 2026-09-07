@@ -1,10 +1,20 @@
 /*
-  Cache-Control: public, max-age=0, must-revalidate
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
 
+# Note: Cache-Control is intentionally NOT on the base rule. Cloudflare Pages
+# MERGES all matching rules and joins duplicate headers with a comma, so a
+# base `max-age` would corrupt the immutable asset rules below.
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
 /*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/blogs/
   Cache-Control: public, max-age=0, must-revalidate
 
 /blogs/index.json
@@ -13,8 +23,21 @@
 /sitemap.xml
   Cache-Control: public, max-age=0, must-revalidate
 
+/robots.txt
+  Cache-Control: public, max-age=0, must-revalidate
+
+/llms.txt
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Unversioned JS stays revalidated so edits to blog-engagement-v2.js propagate.
 /scripts/*
   Cache-Control: public, max-age=0, must-revalidate
+
+# Future fingerprinted/hashed assets. Serve hashed JS/CSS/images under /assets/
+# so they get `immutable`. If you add a hashed file at this path, rename the asset
+# on every change so `immutable` is safe.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
 
 /*.png
   Cache-Control: public, max-age=31536000, immutable

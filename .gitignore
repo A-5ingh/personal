@@ -2,3 +2,10 @@ node_modules/
 .DS_Store
 blogs/index.json
 sitemap.xml
+
+# Secrets — never commit or deploy
+.env
+.env.*
+!.env.example
+*.pem
+*.key
