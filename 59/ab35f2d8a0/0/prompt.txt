@@ -1,0 +1,26 @@
+I have a static HTML site hosted on Cloudflare Pages. Traffic analytics show 
+heavy bot/scanner traffic hitting WordPress and PHP exploit paths that don't 
+exist on this site (e.g. /wp-admin/install.php, /wp-login.php, /.env, 
+/testing/phpinfo.php, xmlrpc.php), plus a low cache hit rate (0.80%) and 
+requests using curl/empty user agents as the top "browsers."
+
+Please:
+
+1. Add a `_headers` file (Cloudflare Pages convention) at the project root 
+   that sets sensible cache-control headers for static assets (long max-age 
+   + immutable for JS/CSS/images, shorter for HTML) to improve cache hit rate.
+
+2. Add a `_redirects` file that returns a 410 Gone (not 404) for common 
+   exploit-probe paths so they stop showing as noise in analytics: 
+   /wp-admin/*, /wp-login.php, /.env, /xmlrpc.php, /wp-content/*, 
+   /wp-includes/*, any *phpinfo* path.
+
+3. Review the repo for any accidentally committed secrets or `.env`-style 
+   files and confirm none are actually served (since /.env is being 
+   requested — confirm it correctly 404s/410s and isn't accidentally present).
+
+4. Suggest Cloudflare dashboard changes I should make manually (WAF custom 
+   rules, Bot Fight Mode) since these aren't in the repo — list them clearly 
+   as "do this in the dashboard," don't try to script them.
+
+Explain each change before making it and show me the diff.

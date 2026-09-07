@@ -1,0 +1,79 @@
+{
+  "cli_version": "0.10.5",
+  "checkpoint_id": "59ab35f2d8a0",
+  "session_id": "ses_f8419ce7bffey7J1PlhI4zccut",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-07T12:58:54.338934Z",
+  "branch": "main",
+  "checkpoints_count": 4,
+  "save_step_count": 4,
+  "files_touched": [
+    ".gitignore",
+    "_headers",
+    "_routes.json",
+    "functions/_middleware.js"
+  ],
+  "agent": "OpenCode",
+  "model": "deepseek-v4-flash-vision-exp",
+  "turn_id": "7b83f032b4d9",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 59445,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1635328,
+    "output_tokens": 8077,
+    "api_call_count": 33
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-09-07T12:58:54.225851Z",
+    "agent_lines": 88,
+    "agent_removed": 1,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 88,
+    "total_lines_changed": 89,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 88,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 88,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 88,
+      "agent_lines_removed": 1
+    }
+  ]
+}
