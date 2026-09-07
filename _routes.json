@@ -4,7 +4,6 @@
   "exclude": [
     "/",
     "/index.html",
-    "/blogs/",
     "/blogs/*",
     "/scripts/*",
     "/robots.txt",
