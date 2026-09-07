@@ -1,3 +1,29 @@
-Account-level web application firewall (WAF)
-Implement uniform and robust security for all domains under 
-I don't have waf access due to free tier i think
+The build has failed:
+/usr/local/bin/npx --no-install wrangler --version
+4.129.0
+🚀 Running Wrangler Commands
+  /usr/local/bin/npx wrangler pages deploy . --project-name=***
+  
+   ⛅️ wrangler 4.129.0
+  ────────────────────
+  ▲ [WARNING] Warning: Your working directory is a git repo and has uncommitted changes
+  
+    To silence this warning, pass in --commit-dirty=true
+  
+  
+  ✨ Compiled Worker successfully
+  Uploading... (16/21)
+  Uploading... (17/21)
+  Uploading... (19/21)
+  Uploading... (21/21)
+  ✨ Success! Uploaded 5 files (16 already uploaded) (0.96 sec)
+  
+  ✨ Uploading _headers
+  ✨ Uploading Functions bundle
+  
+  ✘ [ERROR] Invalid _routes.json file found at: _routes.json
+  
+    Overlapping rules found. Please make sure that rules ending with a splat (eg. "/api/*") don't overlap any other rules (eg. "/api/foo"). This applies to both include and exclude rules individually.
+  
+  
+  🪵  Logs were written to "/home/runner/.config/.wrangler/logs/wrangler-2026-09-07_13-00-53_739.log"
