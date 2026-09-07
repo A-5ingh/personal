@@ -1,0 +1,3 @@
+Account-level web application firewall (WAF)
+Implement uniform and robust security for all domains under 
+I don't have waf access due to free tier i think
